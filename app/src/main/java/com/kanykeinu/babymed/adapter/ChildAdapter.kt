@@ -8,12 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.kanykeinu.babymed.Constants
-import com.kanykeinu.babymed.MedicalFile
+import com.kanykeinu.babymed.MedicalFileActivity
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.listen
 import com.kanykeinu.babymed.util.AgeUtil
 import com.kanykeinu.babymed.model.Child
-import kotlinx.android.synthetic.main.activity_medical_file.*
 import kotlinx.android.synthetic.main.children_list_item.view.*
 
 
@@ -32,7 +31,7 @@ class ChildAdapter(private val mContext: Context, private var objects: List<Chil
         holder.bind(objects.get(position),mContext)
         holder.listen({ pos, type ->
             val item = objects.get(pos)
-            mContext.startActivity(Intent(mContext,MedicalFile::class.java).putExtra(Constants.CHILD,item))
+            mContext.startActivity(Intent(mContext,MedicalFileActivity::class.java).putExtra(Constants.CHILD,item))
         })
     }
 

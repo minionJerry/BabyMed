@@ -1,10 +1,12 @@
 package com.kanykeinu.babymed
 
 import android.arch.persistence.room.Room
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.kanykeinu.babymed.Constants.CHILD
 import com.kanykeinu.babymed.adapter.IllnessAdapter
 import com.kanykeinu.babymed.database.AppDatabase
 import com.kanykeinu.babymed.model.Child
@@ -14,7 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_medical_file.*
 
-class MedicalFile : AppCompatActivity() {
+class MedicalFileActivity : AppCompatActivity() {
 
     var child : Child? = null
 
@@ -27,6 +29,7 @@ class MedicalFile : AppCompatActivity() {
         database = AppDatabase.getInstance(this)
         initFields()
         retrieveIllnessesFromDb()
+        btnAddIllness.setOnClickListener({v -> openAddIllnessScreen()})
     }
 
     fun initFields(){
@@ -58,5 +61,9 @@ class MedicalFile : AppCompatActivity() {
                     iniChildIllnesses(it)
 //                    openAddChildScreen()
                 })
+    }
+
+    fun openAddIllnessScreen(){
+        startActivity(Intent(this,NewIllnessActivity::class.java).putExtra(CHILD,child))
     }
 }
