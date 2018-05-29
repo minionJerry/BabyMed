@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BabyMed</string>
+    <string name="add_child">Add Child</string>
+    <string name="my_children">My children</string>
+    <string name="add_new_child">Add one more child</string>
+    <string name="child">child</string>
+    <string name="avatar_selection">Выберите аватар</string>
+    <string name="from_gallery">Из галереи</string>
+    <string name="from_сamera">С камеры</string>
+    <string name="male">мальчик</string>
+    <string name="female">девочка</string>
+    <string name="select_gender">Выберите пол ребенка</string>
+    <string name="enter_birthdate">Введите дату рождения ребенка</string>
+    <string name="enter_name">Введите имя ребенка</string>
+</resources>

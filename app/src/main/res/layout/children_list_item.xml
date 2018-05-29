@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/childPhoto"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/default_avatar"
+        android:contentDescription="baby photo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+    <TextView
+        android:id="@+id/childName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="bottom|center_vertical"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@+id/childPhoto"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@sample/tools:first_names" />
+
+    <TextView
+        android:id="@+id/childAge"
+        android:layout_width="61dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@+id/childPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/childName"
+        tools:text="@sample/tools:date/ddmmyy" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="7dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/childPhoto"
+        app:layout_constraintTop_toBottomOf="@id/childPhoto" />
+
+</android.support.constraint.ConstraintLayout>

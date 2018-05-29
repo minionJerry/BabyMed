@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.kotlin.android.extensions'
+androidExtensions {
+    experimental = true
+}
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.kanykeinu.babymed"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'joda-time:joda-time:2.9.9'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    implementation "android.arch.persistence.room:runtime:1.1.1-rc1"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+// Testing support
+    androidTestImplementation 'android.arch.core:core-testing:1.1.1'
+    kapt "android.arch.persistence.room:compiler:1.1.0"
+    implementation 'com.github.ekimual:croperino:1.1.7'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
+    implementation 'com.github.drawers:SpinnerDatePicker:1.0.6'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+}
