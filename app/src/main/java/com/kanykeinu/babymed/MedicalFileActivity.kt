@@ -29,7 +29,7 @@ class MedicalFileActivity : AppCompatActivity() {
         database = AppDatabase.getInstance(this)
         initFields()
         retrieveIllnessesFromDb()
-        btnAddIllness.setOnClickListener({v -> openAddIllnessScreen()})
+        btnAddIllness.setOnClickListener({ openAddIllnessScreen()})
     }
 
     fun initFields(){
@@ -44,7 +44,7 @@ class MedicalFileActivity : AppCompatActivity() {
 
     }
 
-    fun iniChildIllnesses(illnesses : List<Illness>) {
+    fun initChildIllnesses(illnesses : List<Illness>) {
         val illnessAdapter = IllnessAdapter(this, illnesses)
         val illnessLinearManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerIllnesses.layoutManager = illnessLinearManager
@@ -58,7 +58,7 @@ class MedicalFileActivity : AppCompatActivity() {
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe ({ it ->
-                    iniChildIllnesses(it)
+                    initChildIllnesses(it)
 //                    openAddChildScreen()
                 })
     }

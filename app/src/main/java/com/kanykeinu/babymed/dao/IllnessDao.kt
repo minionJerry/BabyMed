@@ -25,7 +25,7 @@ interface IllnessDao {
     @Query("Select * from illness where id = :id")
     fun getById(id : Int) : Flowable<Illness>
 
-    @Query("Select * from illness where childId = :id")
+    @Query("Select * from illness where child_id = :id")
     fun getByChildId(id : Int) : Flowable<Illness>
 
 }

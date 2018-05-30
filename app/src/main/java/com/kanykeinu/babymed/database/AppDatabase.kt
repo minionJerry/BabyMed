@@ -10,7 +10,7 @@ import android.arch.persistence.room.Room
 import android.content.Context
 
 
-@Database(entities = arrayOf(Child::class,Illness::class), version = 2)
+@Database(entities = arrayOf(Child::class,Illness::class), version = 4)
 abstract class AppDatabase :RoomDatabase() {
     abstract fun childDao(): ChildDao
     abstract fun illnessDao(): IllnessDao

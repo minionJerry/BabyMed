@@ -12,4 +12,7 @@
     <string name="select_gender">Выберите пол ребенка</string>
     <string name="enter_birthdate">Введите дату рождения ребенка</string>
     <string name="enter_name">Введите имя ребенка</string>
+    <string name="empty_fields_not_allowed">Поля не должны быть пустыми.</string>
+    <string name="empty_illness_not_allowed">Название заболевания не должно быть пустым</string>
+    <string name="data_saved">Данные успешно сохранены</string>
 </resources>

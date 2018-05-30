@@ -3,13 +3,20 @@ package com.kanykeinu.babymed.util
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.widget.ImageView
 import com.kanykeinu.babymed.Constants.REQUEST_CODE_CAMERA
 import com.kanykeinu.babymed.Constants.REQUEST_CODE_GALLERY
 import com.kanykeinu.babymed.R
 import com.mikelau.croperino.Croperino
+import com.mikelau.croperino.CroperinoConfig
+import com.mikelau.croperino.CroperinoFileUtil
+import kotlinx.android.synthetic.main.activity_new_child.*
+import java.lang.ref.WeakReference
 
 class CameraRequestUtil {
 
@@ -20,7 +27,7 @@ class CameraRequestUtil {
             pictureDialog.setTitle(R.string.avatar_selection)
             val pictureDialogItems = arrayOf<String>(context.getString(R.string.from_gallery), context.getString(R.string.from_сamera))
             pictureDialog.setItems(pictureDialogItems
-            ) { dialog, which ->
+            ) { _, which ->
                 when (which) {
                     0 -> if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                             && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
@@ -60,6 +67,40 @@ class CameraRequestUtil {
             ActivityCompat.requestPermissions(context,
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     REQUEST_CODE_GALLERY)
+        }
+
+        fun handleOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?, context: Activity ) : Uri?{
+            when (requestCode) {
+                CroperinoConfig.REQUEST_TAKE_PHOTO -> if (resultCode == Activity.RESULT_OK) {
+                    Croperino.runCropImage(CroperinoFileUtil.getTempFile(), context, true, 1, 1, R.color.gray, R.color.gray_variant)
+                }
+                CroperinoConfig.REQUEST_PICK_FILE -> if (resultCode == Activity.RESULT_OK) {
+                    CroperinoFileUtil.newGalleryFile(data, context)
+                    Croperino.runCropImage(CroperinoFileUtil.getTempFile(), context, true, 0, 0, R.color.gray, R.color.gray_variant)
+                }
+                CroperinoConfig.REQUEST_CROP_PHOTO -> if (resultCode == Activity.RESULT_OK) {
+                    val photo = Uri.fromFile(CroperinoFileUtil.getTempFile())
+                    return photo
+                }
+                else -> {}
+            }
+            return null
+        }
+
+        fun handleRequestPermissionResult(requestCode: Int,grantResults: IntArray,context: Activity){
+            when (requestCode) {
+                REQUEST_CODE_CAMERA -> {
+                    if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        allowToPickAvatar(REQUEST_CODE_CAMERA, context)
+                    }
+                }
+                REQUEST_CODE_GALLERY -> {
+                    if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        allowToPickAvatar(REQUEST_CODE_GALLERY, context)
+                    }
+                }
+                else -> {}
+            }
         }
     }
 }

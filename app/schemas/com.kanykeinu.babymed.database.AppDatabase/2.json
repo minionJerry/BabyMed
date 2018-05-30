@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "57147514e616c55851bf76a9143476ef",
+    "identityHash": "6e6a0d81e985a214b10a3dab989babd9",
     "entities": [
       {
         "tableName": "child",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "illness",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `symptoms` TEXT NOT NULL, `treatment` TEXT, `treatmentPhotoUri` TEXT, `childId` INTEGER NOT NULL, FOREIGN KEY(`childId`) REFERENCES `child`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `symptoms` TEXT NOT NULL, `treatment` TEXT, `treatmentPhotoUri` TEXT, `date` TEXT NOT NULL, `childId` INTEGER NOT NULL, FOREIGN KEY(`childId`) REFERENCES `child`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -95,6 +95,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "childId",
             "columnName": "childId",
             "affinity": "INTEGER",
@@ -125,7 +131,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"57147514e616c55851bf76a9143476ef\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6e6a0d81e985a214b10a3dab989babd9\")"
     ]
   }
 }

@@ -13,5 +13,10 @@ class AgeUtil() {
             val age = Years.yearsBetween(date, now)
             return age.years
         }
+
+        fun getCurrentDate() : String{
+            val date : String = LocalDate().toString("dd MMM yyyy")
+            return date
+        }
     }
 }

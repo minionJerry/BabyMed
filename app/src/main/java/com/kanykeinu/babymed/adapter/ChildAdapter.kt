@@ -29,7 +29,7 @@ class ChildAdapter(private val mContext: Context, private var objects: List<Chil
 
     override fun onBindViewHolder(holder: ChildHolder, position: Int) {
         holder.bind(objects.get(position),mContext)
-        holder.listen({ pos, type ->
+        holder.listen({ pos, _ ->
             val item = objects.get(pos)
             mContext.startActivity(Intent(mContext,MedicalFileActivity::class.java).putExtra(Constants.CHILD,item))
         })
@@ -40,7 +40,7 @@ class ChildAdapter(private val mContext: Context, private var objects: List<Chil
             itemView.childName.text = child.name
             itemView.childAge.text = AgeUtil.getCurrentAge(childBirthDate = child.birthDate).toString() + " лет"
             Glide.with(mContext)
-                    .load(child?.photoUri)
+                    .load(child.photoUri)
                     .into(itemView.childPhoto);
         }
 

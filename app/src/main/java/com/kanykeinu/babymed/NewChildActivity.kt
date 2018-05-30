@@ -17,6 +17,8 @@ import com.kanykeinu.babymed.Constants.REQUEST_CODE_GALLERY
 import com.kanykeinu.babymed.database.AppDatabase
 import com.kanykeinu.babymed.model.Child
 import com.kanykeinu.babymed.util.CameraRequestUtil
+import com.kanykeinu.babymed.util.CameraRequestUtil.Companion.handleOnActivityResult
+import com.kanykeinu.babymed.util.CameraRequestUtil.Companion.handleRequestPermissionResult
 import com.kanykeinu.babymed.util.DialogUtil
 import com.mikelau.croperino.Croperino
 import com.mikelau.croperino.CroperinoConfig
@@ -44,7 +46,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         CroperinoFileUtil.setupDirectory(this)
         database = AppDatabase.getInstance(this)
         btnAddChild.setOnClickListener(this)
-        imageButton.setOnClickListener(this)
+        imgChildPhoto.setOnClickListener(this)
         editTextBirthDate.setOnClickListener(this)
         editTextGender.setOnClickListener(this)
         editTextName.setOnFocusChangeListener(this)
@@ -65,6 +67,8 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
                     weight, uriPhoto.toString(),bloodType)
             Log.e("Child", child.toString())
             database?.childDao()?.insert(child)
+            showToast(getString(R.string.data_saved))
+            finish()
         }
     }
 
@@ -73,7 +77,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
             btnAddChild -> {
                 addNewChildToDb()
             }
-            imageButton -> {
+            imgChildPhoto -> {
                 CameraRequestUtil.showPictureDialog(this)
             }
             editTextGender -> {
@@ -117,37 +121,16 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            CroperinoConfig.REQUEST_TAKE_PHOTO -> if (resultCode == Activity.RESULT_OK) {
-                Croperino.runCropImage(CroperinoFileUtil.getTempFile(), this, true, 1, 1, R.color.gray, R.color.gray_variant)
-            }
-            CroperinoConfig.REQUEST_PICK_FILE -> if (resultCode == Activity.RESULT_OK) {
-                CroperinoFileUtil.newGalleryFile(data, this)
-                Croperino.runCropImage(CroperinoFileUtil.getTempFile(), this, true, 0, 0, R.color.gray, R.color.gray_variant)
-            }
-            CroperinoConfig.REQUEST_CROP_PHOTO -> if (resultCode == Activity.RESULT_OK) {
-                val photo = Uri.fromFile(CroperinoFileUtil.getTempFile())
-                imgChildPhoto.setImageURI(photo)
-                uriPhoto = photo
-            }
-            else -> {
-            }
+        val uri : Uri?  = handleOnActivityResult(requestCode,resultCode,data,this)
+        if (uri!=null)
+        {
+            imgChildPhoto.setImageURI(uri)
+            uriPhoto = uri
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_CODE_CAMERA -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    allowToPickAvatar(REQUEST_CODE_CAMERA, this)
-                }
-            }
-            REQUEST_CODE_GALLERY -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    allowToPickAvatar(REQUEST_CODE_GALLERY, this)
-                }
-            }
-        }
+        handleRequestPermissionResult(requestCode,grantResults,this)
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
