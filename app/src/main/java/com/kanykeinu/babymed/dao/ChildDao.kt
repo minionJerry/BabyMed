@@ -24,4 +24,7 @@ interface ChildDao {
 
     @Query("Select * from child where id = :id")
     fun getById(id : Int) : Flowable<Child>
+
+    @Query("Select birth_date from child where id = :id")
+    fun getBirthDateByChildId(id : Long) : String
 }

@@ -84,15 +84,13 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerIllnesses"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="217dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/btnAddIllness"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgChildPhoto"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <TextView
         android:id="@+id/tvGender"
@@ -155,6 +153,20 @@
         android:text="Группа крови"
         app:layout_constraintStart_toEndOf="@+id/imgChildPhoto"
         app:layout_constraintTop_toBottomOf="@+id/tvWeight" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Перенесенные заболевания"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvGender" />
 
 </android.support.constraint.ConstraintLayout>
 

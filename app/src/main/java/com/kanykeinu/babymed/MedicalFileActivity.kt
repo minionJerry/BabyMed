@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.kanykeinu.babymed.Constants.CHILD
 import com.kanykeinu.babymed.adapter.IllnessAdapter
+import com.kanykeinu.babymed.adapter.IllnessAdapter.OnAgeSet
 import com.kanykeinu.babymed.database.AppDatabase
 import com.kanykeinu.babymed.model.Child
 import com.kanykeinu.babymed.model.Illness
@@ -45,7 +46,13 @@ class MedicalFileActivity : AppCompatActivity() {
     }
 
     fun initChildIllnesses(illnesses : List<Illness>) {
-        val illnessAdapter = IllnessAdapter(this, illnesses)
+        val illnessAdapter = IllnessAdapter(this, illnesses, object  : OnAgeSet{
+            override fun getChildAge(id: Long): Int {
+                var birthDate = database?.childDao()?.getBirthDateByChildId(id)
+                return AgeUtil.getCurrentAge(birthDate!!)
+            }
+
+        })
         val illnessLinearManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerIllnesses.layoutManager = illnessLinearManager
         recyclerIllnesses.adapter = illnessAdapter
@@ -59,7 +66,6 @@ class MedicalFileActivity : AppCompatActivity() {
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe ({ it ->
                     initChildIllnesses(it)
-//                    openAddChildScreen()
                 })
     }
 
