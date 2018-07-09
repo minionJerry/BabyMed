@@ -1,4 +1,4 @@
-package com.kanykeinu.babymed.util
+package com.kanykeinu.babymed.utils
 
 import android.Manifest
 import android.app.Activity
@@ -6,19 +6,16 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.widget.ImageView
-import com.kanykeinu.babymed.Constants.REQUEST_CODE_CAMERA
-import com.kanykeinu.babymed.Constants.REQUEST_CODE_GALLERY
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.kanykeinu.babymed.utils.Constants.REQUEST_CODE_CAMERA
+import com.kanykeinu.babymed.utils.Constants.REQUEST_CODE_GALLERY
 import com.kanykeinu.babymed.R
 import com.mikelau.croperino.Croperino
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
-import kotlinx.android.synthetic.main.activity_new_child.*
-import java.lang.ref.WeakReference
 
-class CameraRequestUtil {
+class CameraRequestHandler {
 
     companion object {
 

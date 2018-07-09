@@ -1,19 +1,13 @@
-package com.kanykeinu.babymed.adapter
+package com.kanykeinu.babymed.view.childdetail
 
-import android.arch.persistence.room.Room
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.kanykeinu.babymed.R
-import com.kanykeinu.babymed.database.AppDatabase
-import com.kanykeinu.babymed.util.AgeUtil.Companion.getCurrentAge
-import com.kanykeinu.babymed.listen
-import com.kanykeinu.babymed.model.Illness
-import com.kanykeinu.babymed.util.AgeUtil
+import com.kanykeinu.babymed.data.source.local.entity.Illness
 import kotlinx.android.synthetic.main.illness_list_item.view.*
 
 

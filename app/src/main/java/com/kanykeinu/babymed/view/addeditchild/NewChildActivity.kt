@@ -1,50 +1,50 @@
-package com.kanykeinu.babymed
+package com.kanykeinu.babymed.view.addeditchild
 
-import android.app.Activity
-import android.arch.persistence.room.Room
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import com.kanykeinu.babymed.util.CameraRequestUtil.Companion.allowToPickAvatar
-import com.kanykeinu.babymed.Constants.DIRECTORY
-import com.kanykeinu.babymed.Constants.RAW_DIRECTORY
-import com.kanykeinu.babymed.Constants.REQUEST_CODE_CAMERA
-import com.kanykeinu.babymed.Constants.REQUEST_CODE_GALLERY
-import com.kanykeinu.babymed.database.AppDatabase
-import com.kanykeinu.babymed.model.Child
-import com.kanykeinu.babymed.util.CameraRequestUtil
-import com.kanykeinu.babymed.util.CameraRequestUtil.Companion.handleOnActivityResult
-import com.kanykeinu.babymed.util.CameraRequestUtil.Companion.handleRequestPermissionResult
-import com.kanykeinu.babymed.util.DialogUtil
-import com.mikelau.croperino.Croperino
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
+import com.kanykeinu.babymed.R
+import com.kanykeinu.babymed.utils.Constants.DIRECTORY
+import com.kanykeinu.babymed.utils.Constants.RAW_DIRECTORY
+import com.kanykeinu.babymed.data.source.local.BabyMedDatabase
+import com.kanykeinu.babymed.data.source.local.entity.Child
+import com.kanykeinu.babymed.utils.CameraRequestHandler
+import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleOnActivityResult
+import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleRequestPermissionResult
+import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
+import com.kanykeinu.babymed.utils.DialogView
+import com.kanykeinu.babymed.utils.showToast
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
 import com.tsongkha.spinnerdatepicker.DatePicker
 import com.tsongkha.spinnerdatepicker.DatePickerDialog
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
+import dagger.android.AndroidInjection
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_new_child.*
+import java.lang.ref.WeakReference
 import java.text.DateFormatSymbols
 import java.util.*
-import javax.security.auth.callback.Callback
+import javax.inject.Inject
 
 class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocusChangeListener, DatePickerDialog.OnDateSetListener {
 
+    @Inject
+    lateinit var addEditChildViewModelFactory: AddEditChildViewModelFactory
+    lateinit var addEditChildViewModel: AddEditChildViewModel
 
-    private var database: AppDatabase? = null
     private var uriPhoto: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injectChildrenViewModel()
         setContentView(R.layout.activity_new_child)
-        CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", DIRECTORY, RAW_DIRECTORY)
+        CroperinoConfig(PHOTO_NAME, DIRECTORY, RAW_DIRECTORY)
         CroperinoFileUtil.setupDirectory(this)
-        database = AppDatabase.getInstance(this)
         btnAddChild.setOnClickListener(this)
         imgChildPhoto.setOnClickListener(this)
         editTextBirthDate.setOnClickListener(this)
@@ -53,7 +53,42 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBirthDate.setOnFocusChangeListener(this)
     }
 
-    fun addNewChildToDb(){
+    private fun injectChildrenViewModel(){
+        AndroidInjection.inject(this)
+        addEditChildViewModel = ViewModelProviders.of(this,addEditChildViewModelFactory).get(AddEditChildViewModel::class.java)
+
+        addEditChildViewModel.onError().observe( this, androidx.lifecycle.Observer { error ->
+            if (error!=null)
+                showToast(error)
+        })
+
+        addEditChildViewModel.onComplete().observe(this, androidx.lifecycle.Observer {
+            showToast(getString(R.string.data_saved))
+            finish()
+        })
+    }
+
+    override fun onClick(v: View?) {
+        when(v){
+            btnAddChild -> {
+                validateFieldsAndAdd()
+            }
+            imgChildPhoto -> {
+                CameraRequestHandler.showPictureDialog(this)
+            }
+            editTextGender -> {
+                DialogView.genderDialog(this, WeakReference(editTextGender))
+            }
+            editTextBirthDate -> {
+                setChildBirthdate()
+            }
+            else ->{
+
+            }
+        }
+    }
+
+    fun validateFieldsAndAdd(){
         if (editTextBirthDate.text.toString().equals(""))
             wrapperBirthDate.error = getString(R.string.enter_birthdate)
         else if (editTextName.text.toString().equals(""))
@@ -64,31 +99,9 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
             val weight = if (!editTextWeight.text.toString().equals("")) editTextWeight.text.toString().toInt() else null
             val bloodType = if (!editTextBloodType.text.toString().equals("")) editTextBloodType.text.toString().toInt() else null
             val child = Child(0, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
-                    weight, uriPhoto.toString(),bloodType)
+                    weight, uriPhoto.toString(), bloodType)
             Log.e("Child", child.toString())
-            database?.childDao()?.insert(child)
-            showToast(getString(R.string.data_saved))
-            finish()
-        }
-    }
-
-    override fun onClick(v: View?) {
-        when(v){
-            btnAddChild -> {
-                addNewChildToDb()
-            }
-            imgChildPhoto -> {
-                CameraRequestUtil.showPictureDialog(this)
-            }
-            editTextGender -> {
-                DialogUtil.genderDialog(this,editTextGender)
-            }
-            editTextBirthDate -> {
-                setChildBirthdate()
-            }
-            else ->{
-
-            }
+            addEditChildViewModel.saveChild(child)
         }
     }
 
@@ -138,6 +151,11 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBirthDate.setText(date)
     }
 
+
+    override fun onStop() {
+        addEditChildViewModel.disposeObserver()
+        super.onStop()
+    }
 }
 
 

@@ -1,33 +1,32 @@
-package com.kanykeinu.babymed
+package com.kanykeinu.babymed.view.childdetail
 
-import android.arch.persistence.room.Room
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.kanykeinu.babymed.Constants.CHILD
-import com.kanykeinu.babymed.adapter.IllnessAdapter
-import com.kanykeinu.babymed.adapter.IllnessAdapter.OnAgeSet
-import com.kanykeinu.babymed.database.AppDatabase
-import com.kanykeinu.babymed.model.Child
-import com.kanykeinu.babymed.model.Illness
-import com.kanykeinu.babymed.util.AgeUtil
+import com.kanykeinu.babymed.R
+import com.kanykeinu.babymed.utils.Constants.CHILD
+import com.kanykeinu.babymed.view.childdetail.IllnessAdapter.OnAgeSet
+import com.kanykeinu.babymed.view.addeditillness.NewIllnessActivity
+import com.kanykeinu.babymed.data.source.local.BabyMedDatabase
+import com.kanykeinu.babymed.data.source.local.entity.Child
+import com.kanykeinu.babymed.data.source.local.entity.Illness
+import com.kanykeinu.babymed.utils.Constants
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_medical_file.*
 
-class MedicalFileActivity : AppCompatActivity() {
+class ChildDetailActivity : AppCompatActivity() {
 
     var child : Child? = null
 
-    private var database: AppDatabase? = null
+    private var database: BabyMedDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_medical_file)
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
-        database = AppDatabase.getInstance(this)
         initFields()
         retrieveIllnessesFromDb()
         btnAddIllness.setOnClickListener({ openAddIllnessScreen()})
@@ -35,7 +34,7 @@ class MedicalFileActivity : AppCompatActivity() {
 
     fun initFields(){
         tvName.text = child?.name
-        tvAge.text = AgeUtil.getCurrentAge(child!!.birthDate).toString()
+        tvAge.text = Child.getCurrentAge(child!!.birthDate).toString()
         tvBloodType.text = if (child?.bloodType != null) child!!.bloodType.toString() else ""
         tvGender.text = child?.gender
         tvWeight.text = if (child?.weight != null) child!!.weight.toString() else ""
@@ -46,10 +45,10 @@ class MedicalFileActivity : AppCompatActivity() {
     }
 
     fun initChildIllnesses(illnesses : List<Illness>) {
-        val illnessAdapter = IllnessAdapter(this, illnesses, object  : OnAgeSet{
+        val illnessAdapter = IllnessAdapter(this, illnesses, object : OnAgeSet {
             override fun getChildAge(id: Long): Int {
                 var birthDate = database?.childDao()?.getBirthDateByChildId(id)
-                return AgeUtil.getCurrentAge(birthDate!!)
+                return Child.getCurrentAge(birthDate!!)
             }
 
         })
@@ -70,6 +69,6 @@ class MedicalFileActivity : AppCompatActivity() {
     }
 
     fun openAddIllnessScreen(){
-        startActivity(Intent(this,NewIllnessActivity::class.java).putExtra(CHILD,child))
+        startActivity(Intent(this, NewIllnessActivity::class.java).putExtra(CHILD,child))
     }
 }

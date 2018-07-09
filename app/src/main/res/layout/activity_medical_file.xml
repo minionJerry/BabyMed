@@ -6,12 +6,12 @@
     <!--android:layout_height="match_parent"-->
     <!--android:layout_width="match_parent">-->
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MedicalFileActivity">
+    tools:context=".view.childdetail.ChildDetailActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgChildPhoto"
@@ -69,8 +69,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/imgChildPhoto"
-        app:layout_constraintTop_toBottomOf="@+id/tvNameTitle"
-        tools:text="@sample/tools:first_names" />
+        app:layout_constraintTop_toBottomOf="@+id/tvNameTitle" />
 
     <Button
         android:id="@+id/btnAddIllness"
@@ -81,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerIllnesses"
         android:layout_width="match_parent"
         android:layout_height="217dp"
@@ -168,6 +167,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvGender" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 <!--</android.support.v4.widget.NestedScrollView>-->

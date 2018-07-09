@@ -1,8 +1,9 @@
-package com.kanykeinu.babymed
+package com.kanykeinu.babymed.utils
+
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
 
 fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int, type: Int) -> Unit): T {
     itemView.setOnClickListener {

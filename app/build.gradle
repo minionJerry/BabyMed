@@ -2,20 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'org.jetbrains.kotlin.android.extensions'
 androidExtensions {
     experimental = true
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.kanykeinu.babymed"
-        minSdkVersion 21
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.minSDKVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -31,25 +30,53 @@ android {
 }
 
 dependencies {
+    def lifecycle_version = "2.0.0-alpha1"
+    def lifecycle_ext_version = "2.0.0-beta01"
+    def rxJavaAdapterVersion = "2.3.0"
+    def rxAndroidVersion = "2.0.2"
+    def rxJava2Version = "2.1.0"
+    def constraint_version = "2.0.0-alpha1"
+    def room_version = "2.0.0-beta01"
+    def support_version = "1.0.0-beta01"
+    def test_version = "1.1.0-alpha3"
+    def espresso_version = "3.1.0-alpha3"
+    def dagger2_version = "2.16"
+    def  moshiKotlinVersion = "1.5.0"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation "androidx.core:core-ktx:$support_version"
+    //Support
+    implementation "androidx.appcompat:appcompat:$support_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+    implementation "androidx.recyclerview:recyclerview:$support_version"
+    implementation "com.google.android.material:material:$support_version"
+    //Test
+    androidTestImplementation "androidx.test:runner:$test_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    //Room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+    // UI components
     implementation 'joda-time:joda-time:2.9.9'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.github.bumptech.glide:glide:4.2.0'
-    implementation "android.arch.persistence.room:runtime:1.1.1-rc1"
-    implementation "android.arch.persistence.room:rxjava2:1.1.0"
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
-// Testing support
-    androidTestImplementation 'android.arch.core:core-testing:1.1.1'
-    kapt "android.arch.persistence.room:compiler:1.1.0"
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
     implementation 'com.github.ekimual:croperino:1.1.7'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
     implementation 'com.github.drawers:SpinnerDatePicker:1.0.6'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    //moshi
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiKotlinVersion"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiKotlinVersion"
+    //dagger2
+    implementation "com.google.dagger:dagger-android:$dagger2_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
+    //Lifecycle
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_ext_version"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    //RxJava 2 LiveData
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:$lifecycle_ext_version"
+    //RxJava RxAndroid
+    implementation "io.reactivex.rxjava2:rxjava:$rxJava2Version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
 }

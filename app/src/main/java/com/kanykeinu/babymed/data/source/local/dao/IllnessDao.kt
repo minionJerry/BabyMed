@@ -1,12 +1,9 @@
-package com.kanykeinu.babymed.dao
+package com.kanykeinu.babymed.data.source.local.dao
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
-import com.kanykeinu.babymed.model.Child
-import com.kanykeinu.babymed.model.Illness
+import androidx.room.*
+import com.kanykeinu.babymed.data.source.local.entity.Illness
+import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Observable
-import org.intellij.lang.annotations.Flow
 
 @Dao
 interface IllnessDao {
@@ -26,6 +23,6 @@ interface IllnessDao {
     fun getById(id : Int) : Flowable<Illness>
 
     @Query("Select * from illness where child_id = :id")
-    fun getByChildId(id : Int) : Flowable<Illness>
+    fun getByChildId(id : Int) : Flowable<List<Illness>>
 
 }
