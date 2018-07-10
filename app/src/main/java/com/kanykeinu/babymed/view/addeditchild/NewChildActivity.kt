@@ -4,13 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.utils.Constants.DIRECTORY
 import com.kanykeinu.babymed.utils.Constants.RAW_DIRECTORY
-import com.kanykeinu.babymed.data.source.local.BabyMedDatabase
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.utils.CameraRequestHandler
 import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleOnActivityResult
@@ -24,7 +25,6 @@ import com.tsongkha.spinnerdatepicker.DatePicker
 import com.tsongkha.spinnerdatepicker.DatePickerDialog
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import dagger.android.AndroidInjection
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_new_child.*
 import java.lang.ref.WeakReference
 import java.text.DateFormatSymbols
@@ -36,16 +36,15 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     @Inject
     lateinit var addEditChildViewModelFactory: AddEditChildViewModelFactory
     lateinit var addEditChildViewModel: AddEditChildViewModel
-
     private var uriPhoto: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectChildrenViewModel()
+        injectAddChildViewModel()
         setContentView(R.layout.activity_new_child)
+        initActionBar()
         CroperinoConfig(PHOTO_NAME, DIRECTORY, RAW_DIRECTORY)
         CroperinoFileUtil.setupDirectory(this)
-        btnAddChild.setOnClickListener(this)
         imgChildPhoto.setOnClickListener(this)
         editTextBirthDate.setOnClickListener(this)
         editTextGender.setOnClickListener(this)
@@ -53,9 +52,10 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBirthDate.setOnFocusChangeListener(this)
     }
 
-    private fun injectChildrenViewModel(){
+    private fun injectAddChildViewModel(){
         AndroidInjection.inject(this)
         addEditChildViewModel = ViewModelProviders.of(this,addEditChildViewModelFactory).get(AddEditChildViewModel::class.java)
+        addEditChildViewModel.initDisposableObserver()
 
         addEditChildViewModel.onError().observe( this, androidx.lifecycle.Observer { error ->
             if (error!=null)
@@ -68,11 +68,15 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         })
     }
 
+    private fun initActionBar(){
+        setSupportActionBar(newChildToolbar)
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Adding child"
+    }
+
     override fun onClick(v: View?) {
         when(v){
-            btnAddChild -> {
-                validateFieldsAndAdd()
-            }
             imgChildPhoto -> {
                 CameraRequestHandler.showPictureDialog(this)
             }
@@ -88,7 +92,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         }
     }
 
-    fun validateFieldsAndAdd(){
+    fun validateFieldsAndAddChild(){
         if (editTextBirthDate.text.toString().equals(""))
             wrapperBirthDate.error = getString(R.string.enter_birthdate)
         else if (editTextName.text.toString().equals(""))
@@ -151,10 +155,22 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBirthDate.setText(date)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_add_child, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
 
-    override fun onStop() {
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId){
+            R.id.done -> validateFieldsAndAddChild()
+            android.R.id.home -> onBackPressed ()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
         addEditChildViewModel.disposeObserver()
-        super.onStop()
+        super.onDestroy()
     }
 }
 

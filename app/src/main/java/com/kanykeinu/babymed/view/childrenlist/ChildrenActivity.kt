@@ -2,6 +2,8 @@ package com.kanykeinu.babymed.view.childrenlist
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -25,13 +27,19 @@ class ChildrenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidInjection.inject(this)
+        injectChildrenViewModel()
         setContentView(R.layout.activity_main)
-        childrenViewModel = ViewModelProviders.of(this,childrenViewModelFactory).get(ChildrenViewModel::class.java)
+        setSupportActionBar(bottomAppBar)
         progressBar.visibility = View.VISIBLE
         initRecyclerView()
         openAddChildScreen()
         loadData()
+    }
+
+
+    private fun injectChildrenViewModel(){
+        AndroidInjection.inject(this)
+        childrenViewModel = ViewModelProviders.of(this,childrenViewModelFactory).get(ChildrenViewModel::class.java)
 
         childrenViewModel.onSuccess()
                 .observe(this, Observer<List<Child>> { children->
@@ -77,5 +85,18 @@ class ChildrenActivity : AppCompatActivity() {
     override fun onDestroy() {
         childrenViewModel.disposeObserver()
         super.onDestroy()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_children_list,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId){
+            R.id.delete -> showToast("Delete is clicked")
+            R.id.edit -> showToast("Edit is clicked")
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

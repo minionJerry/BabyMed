@@ -15,4 +15,7 @@
     <string name="empty_fields_not_allowed">Поля не должны быть пустыми.</string>
     <string name="empty_illness_not_allowed">Название заболевания не должно быть пустым</string>
     <string name="data_saved">Данные успешно сохранены</string>
+    <string name="save">Сохранить</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
 </resources>

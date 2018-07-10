@@ -20,7 +20,7 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     private var addChildComplete : MutableLiveData<Boolean> = MutableLiveData()
     lateinit var  disposableObserver : DisposableObserver<Unit>
 
-    fun saveChild(child : Child)  {
+    fun initDisposableObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
             override fun onComplete() {
                 addChildComplete.postValue(true)
@@ -33,7 +33,9 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
                 addChildError.postValue(e.message)
             }
         }
+    }
 
+    fun saveChild(child : Child)  {
         babyMedRepository.insertChildToDb(child)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())

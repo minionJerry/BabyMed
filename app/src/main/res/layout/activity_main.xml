@@ -21,7 +21,7 @@
                 android:layout_height="33dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/rubik_medium"
                 android:gravity="center"
@@ -38,9 +38,8 @@
                 android:id="@+id/recyclerChildren"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="32dp"
-                android:nestedScrollingEnabled="false"
                 android:scrollbars="vertical"
+                android:layout_marginBottom="56dp"
                 app:layout_constraintBottom_toBottomOf="@+id/coordinatorLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -76,7 +75,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/bar"
+            android:id="@+id/bottomAppBar"
             style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -92,7 +91,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_white"
             app:backgroundTint="@color/colorAccent"
-            app:layout_anchor="@id/bar" />
+            app:layout_anchor="@id/bottomAppBar" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
