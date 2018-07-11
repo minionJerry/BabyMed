@@ -11,8 +11,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.data.source.local.entity.Child
+import com.kanykeinu.babymed.utils.Constants
 import com.kanykeinu.babymed.utils.showToast
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
+import com.kanykeinu.babymed.view.childdetail.ChildDetailActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.recyclerChildren
@@ -23,7 +25,11 @@ class ChildrenActivity : AppCompatActivity() {
     @Inject
     lateinit var childrenViewModelFactory: ChildrenViewModelFactory
     lateinit var childrenViewModel: ChildrenViewModel
-    private val childAdapter = ChildrenAdapter(this,ArrayList())
+    private val childAdapter = ChildrenAdapter(this,ArrayList(),object : OnChildItemClick{
+        override fun onChildClick(child: Child) {
+            startActivity(Intent(applicationContext, ChildDetailActivity::class.java).putExtra(Constants.CHILD,child))
+        }
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,14 +94,13 @@ class ChildrenActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_children_list,menu)
+        menuInflater.inflate(R.menu.menu_main_settings,menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
-            R.id.delete -> showToast("Delete is clicked")
-            R.id.edit -> showToast("Edit is clicked")
+            R.id.settings -> showToast("Settings is clicked")
         }
         return super.onOptionsItemSelected(item)
     }

@@ -50,6 +50,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextGender.setOnClickListener(this)
         editTextName.setOnFocusChangeListener(this)
         editTextBirthDate.setOnFocusChangeListener(this)
+        btnSave.setOnClickListener(this)
     }
 
     private fun injectAddChildViewModel(){
@@ -72,11 +73,14 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         setSupportActionBar(newChildToolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Adding child"
+        supportActionBar?.title = ""
     }
 
     override fun onClick(v: View?) {
         when(v){
+            btnSave -> {
+                validateFieldsAndAddChild()
+            }
             imgChildPhoto -> {
                 CameraRequestHandler.showPictureDialog(this)
             }
@@ -155,14 +159,8 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBirthDate.setText(date)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_add_child, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
-            R.id.done -> validateFieldsAndAddChild()
             android.R.id.home -> onBackPressed ()
         }
         return super.onOptionsItemSelected(item)

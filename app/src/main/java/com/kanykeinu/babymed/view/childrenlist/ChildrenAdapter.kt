@@ -15,9 +15,7 @@ import com.kanykeinu.babymed.data.source.local.entity.Child
 import kotlinx.android.synthetic.main.children_list_item.view.*
 
 
-class ChildrenAdapter(private val mContext: Context, private var objects: MutableList<Child>) : RecyclerView.Adapter<ChildrenAdapter.ChildHolder>() {
-
-
+class ChildrenAdapter(private val mContext: Context, private var objects: MutableList<Child>, private var onChildItemClick: OnChildItemClick) : RecyclerView.Adapter<ChildrenAdapter.ChildHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChildHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.children_list_item,parent,false)
@@ -32,7 +30,7 @@ class ChildrenAdapter(private val mContext: Context, private var objects: Mutabl
         holder.bind(objects.get(position),mContext)
         holder.listen({ pos, _ ->
             val item = objects.get(pos)
-            mContext.startActivity(Intent(mContext, ChildDetailActivity::class.java).putExtra(Constants.CHILD,item))
+            onChildItemClick.onChildClick(item)
         })
     }
 
@@ -53,4 +51,9 @@ class ChildrenAdapter(private val mContext: Context, private var objects: Mutabl
         }
 
     }
+}
+
+
+interface OnChildItemClick{
+    fun onChildClick(child: Child)
 }

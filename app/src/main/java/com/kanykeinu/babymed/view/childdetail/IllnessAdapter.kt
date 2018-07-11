@@ -25,7 +25,7 @@ class IllnessAdapter(private val mContext: Context, private var objects: List<Il
 
     override fun onBindViewHolder(holder: IllnessHolder, position: Int) {
         holder.bind(objects.get(position))
-        val age : Int = onAgeSet.getChildAge(objects.get(position).childId)
+        val age : Int? = onAgeSet.getChildAge(objects.get(position).childId)
         holder.getChildAgeEditText()?.text = "в " + age + " лет"
     }
 

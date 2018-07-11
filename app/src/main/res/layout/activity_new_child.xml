@@ -115,7 +115,7 @@
                 android:id="@+id/imgChildPhoto"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginTop="88dp"
+                android:layout_marginTop="112dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/default_avatar"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -151,23 +151,53 @@
                 app:layout_constraintEnd_toEndOf="@+id/imgChildPhoto"
                 app:srcCompat="@drawable/ic_photo_camera_24_px" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginStart="64dp"
+                android:text="Сохранить"
+                app:cornerRadius="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout5" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="My child"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/imgChildPhoto"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.47"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:background="@android:color/transparent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/newChildToolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@android:color/transparent"
+            android:layout_height="?actionBarSize"
             app:layout_scrollFlags="enterAlways">
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

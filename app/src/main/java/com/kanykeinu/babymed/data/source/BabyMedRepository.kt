@@ -15,12 +15,17 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
                 .toObservable()
     }
 
+    fun insertChildToDb(child : Child): Observable<Unit>? {
+        return Observable.fromCallable{ childDao.insert(child)}
+    }
+
     fun getIllnessesFromDb(childId : Int) : Observable<List<Illness>> {
         return illnessDao.getByChildId(childId)
                 .toObservable()
     }
 
-    fun insertChildToDb(child : Child): Observable<Unit>? {
-        return Observable.fromCallable{ childDao.insert(child)}
-    }
+//    fun getIllnessesFromDb(childId : Int) : Observable<List<Illness>> {
+//        return illnessDao.getByChildId(childId)
+//                .toObservable()
+//    }
 }
