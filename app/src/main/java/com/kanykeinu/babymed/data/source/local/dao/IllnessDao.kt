@@ -20,9 +20,9 @@ interface IllnessDao {
     fun update(illness: Illness)
 
     @Query("Select * from illness where id = :id")
-    fun getById(id : Int) : Flowable<Illness>
+    fun getById(id : Long) : Flowable<Illness>
 
     @Query("Select * from illness where child_id = :id")
-    fun getByChildId(id : Int) : Flowable<List<Illness>>
+    fun getByChildId(id : Long) : Flowable<List<Illness>>
 
 }

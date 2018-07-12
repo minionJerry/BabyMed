@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.utils.Constants.DIRECTORY
 import com.kanykeinu.babymed.utils.Constants.RAW_DIRECTORY
@@ -16,6 +17,7 @@ import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.utils.CameraRequestHandler
 import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleOnActivityResult
 import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleRequestPermissionResult
+import com.kanykeinu.babymed.utils.Constants.CHILD
 import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
 import com.kanykeinu.babymed.utils.DialogView
 import com.kanykeinu.babymed.utils.showToast
@@ -26,6 +28,7 @@ import com.tsongkha.spinnerdatepicker.DatePickerDialog
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_new_child.*
+import kotlinx.android.synthetic.main.children_list_item.view.*
 import java.lang.ref.WeakReference
 import java.text.DateFormatSymbols
 import java.util.*
@@ -37,19 +40,22 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     lateinit var addEditChildViewModelFactory: AddEditChildViewModelFactory
     lateinit var addEditChildViewModel: AddEditChildViewModel
     private var uriPhoto: Uri? = null
+    private var child : Child? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectAddChildViewModel()
         setContentView(R.layout.activity_new_child)
         initActionBar()
-        CroperinoConfig(PHOTO_NAME, DIRECTORY, RAW_DIRECTORY)
-        CroperinoFileUtil.setupDirectory(this)
+        child = intent.getParcelableExtra(CHILD)
+        if (child!=null)
+            getChildFromIntentAndInitFields(child!!)
+        setupCameraCropConfigs()
         imgChildPhoto.setOnClickListener(this)
         editTextBirthDate.setOnClickListener(this)
+        editTextBirthDate.setOnFocusChangeListener(this)
         editTextGender.setOnClickListener(this)
         editTextName.setOnFocusChangeListener(this)
-        editTextBirthDate.setOnFocusChangeListener(this)
         btnSave.setOnClickListener(this)
     }
 
@@ -76,6 +82,20 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         supportActionBar?.title = ""
     }
 
+    private fun getChildFromIntentAndInitFields(child: Child){
+            editTextName.setText(child.name)
+            editTextBirthDate.setText(child.birthDate)
+            editTextWeight.setText(child.weight.toString())
+            editTextBloodType.setText(child.bloodType.toString())
+            editTextGender.setText(child.gender)
+            imgChildPhoto.setImageURI(Uri.parse(child.photoUri))
+    }
+
+    private fun setupCameraCropConfigs(){
+        CroperinoConfig(PHOTO_NAME, DIRECTORY, RAW_DIRECTORY)
+        CroperinoFileUtil.setupDirectory(this)
+    }
+
     override fun onClick(v: View?) {
         when(v){
             btnSave -> {
@@ -91,12 +111,11 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
                 setChildBirthdate()
             }
             else ->{
-
             }
         }
     }
 
-    fun validateFieldsAndAddChild(){
+    private fun validateFieldsAndAddChild(){
         if (editTextBirthDate.text.toString().equals(""))
             wrapperBirthDate.error = getString(R.string.enter_birthdate)
         else if (editTextName.text.toString().equals(""))
@@ -113,7 +132,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         }
     }
 
-    fun setChildBirthdate(){
+    private fun setChildBirthdate(){
         val calendar = Calendar.getInstance()
         val mm = calendar.get(Calendar.MONTH)
         val dd = calendar.get(Calendar.DAY_OF_MONTH)
@@ -161,7 +180,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
-            android.R.id.home -> onBackPressed ()
+            android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -171,5 +190,3 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         super.onDestroy()
     }
 }
-
-

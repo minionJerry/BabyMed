@@ -1,7 +1,9 @@
 package com.kanykeinu.babymed.utils
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.widget.EditText
 import com.kanykeinu.babymed.R
 import java.lang.ref.WeakReference
@@ -20,5 +22,28 @@ class DialogView {
             }
             alert.show()
         }
+
+        fun deletingConfirm(context: Context, onDialogItemSelected: OnDialogItemSelected) {
+            val alert = AlertDialog.Builder(context, R.style.DialogTheme)
+            alert.setTitle("Предупреждение!")
+            alert.setMessage("Вы уверены, что хотите безвозвратно удалить данные об этом ребенке?")
+            alert.setPositiveButton("Да", object : DialogInterface.OnClickListener{
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+                    onDialogItemSelected.onDialogClicked()
+                }
+
+            })
+            alert.setNegativeButton("Нет",object : DialogInterface.OnClickListener{
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+
+                }
+
+            })
+            alert.show()
+        }
     }
+}
+
+interface OnDialogItemSelected{
+    fun onDialogClicked();
 }

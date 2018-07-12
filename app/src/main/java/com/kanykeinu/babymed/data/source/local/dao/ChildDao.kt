@@ -20,7 +20,7 @@ interface ChildDao {
     fun update(child: Child)
 
     @Query("Select * from child where id = :id")
-    fun getById(id : Int) : Flowable<Child>
+    fun getById(id : Long) : Flowable<Child>
 
     @Query("Select birth_date from child where id = :id")
     fun getBirthDateByChildId(id : Long) : String
