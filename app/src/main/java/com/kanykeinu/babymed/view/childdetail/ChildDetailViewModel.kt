@@ -81,12 +81,10 @@ class ChildDetailViewModel @Inject constructor(private val babyMedRepository: Ba
 
             override fun onNext(t: Child) {
                 childResult.postValue(t)
-//                childrenIllnessesLoader.postValue(false)
             }
 
             override fun onError(e: Throwable) {
-//                childrenIllnessesError.postValue(e.message)
-//                childrenIllnessesLoader.postValue(false)
+                childrenIllnessesError.postValue(e.message)
             }
         }
     }

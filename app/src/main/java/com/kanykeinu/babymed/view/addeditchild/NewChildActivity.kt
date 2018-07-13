@@ -99,7 +99,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     override fun onClick(v: View?) {
         when(v){
             btnSave -> {
-                validateFieldsAndAddChild()
+                saveOrUpdateChild()
             }
             imgChildPhoto -> {
                 CameraRequestHandler.showPictureDialog(this)
@@ -115,21 +115,41 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         }
     }
 
-    private fun validateFieldsAndAddChild(){
-        if (editTextBirthDate.text.toString().equals(""))
-            wrapperBirthDate.error = getString(R.string.enter_birthdate)
-        else if (editTextName.text.toString().equals(""))
-            textInputLayout.error = getString(R.string.enter_name)
-        else {
+
+    private fun saveOrUpdateChild(){
+        val newChild : Child
+        val areFieldsFalidated = validateFields()
+        if (areFieldsFalidated) {
             wrapperBirthDate.error = null
             textInputLayout.error = null
             val weight = if (!editTextWeight.text.toString().equals("")) editTextWeight.text.toString().toInt() else null
             val bloodType = if (!editTextBloodType.text.toString().equals("")) editTextBloodType.text.toString().toInt() else null
-            val child = Child(0, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
-                    weight, uriPhoto.toString(), bloodType)
+
             Log.e("Child", child.toString())
-            addEditChildViewModel.saveChild(child)
+            if (child == null) {
+                newChild = Child(0, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
+                        weight, uriPhoto.toString(), bloodType)
+                addEditChildViewModel.saveChild(newChild)
+            }
+            else {
+                newChild = Child(child!!.id, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
+                        weight, uriPhoto.toString(), bloodType)
+                addEditChildViewModel.updateChild(newChild)
+            }
         }
+
+    }
+
+    private fun validateFields() : Boolean{
+        if (editTextBirthDate.text.toString().equals("")) {
+            wrapperBirthDate.error = getString(R.string.enter_birthdate)
+            return false
+        }
+        else if (editTextName.text.toString().equals("")) {
+            textInputLayout.error = getString(R.string.enter_name)
+            return false
+        }
+        else return true
     }
 
     private fun setChildBirthdate(){

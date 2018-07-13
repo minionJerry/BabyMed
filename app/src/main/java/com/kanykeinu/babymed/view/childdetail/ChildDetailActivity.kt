@@ -40,6 +40,7 @@ class ChildDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_medical_file)
         initActionBar()
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
+        childDetailViewModel.getChildData(child.id)
         retrieveIllnessesFromDb()
         fabAddIllness.setOnClickListener { openAddIllnessScreen() }
     }
@@ -80,10 +81,10 @@ class ChildDetailActivity : AppCompatActivity() {
                 })
     }
 
-    fun initChildIllnesses(illnesses : List<Illness>) {
+    private fun initChildIllnesses(illnesses : List<Illness>) {
         val illnessAdapter = IllnessAdapter(this, illnesses, object : OnAgeSet {
             override fun getChildAge(id: Long): Int {
-                return Child.getCurrentAge(child!!.birthDate)
+                return Child.getCurrentAge(child.birthDate)
             }
 
         })
@@ -99,29 +100,23 @@ class ChildDetailActivity : AppCompatActivity() {
         supportActionBar?.title = ""
     }
 
-    fun initFields(child: Child){
-        //init fields
-        tvName.text = child?.name
-        tvAge.text = Child.getCurrentAge(child!!.birthDate).toString()
-        tvBloodType.text = if (child?.bloodType != null) child!!.bloodType.toString() else ""
-        tvGender.text = child?.gender
-        tvWeight.text = if (child?.weight != null) child!!.weight.toString() else ""
+    private fun initFields(child: Child){
+        tvName.text = child.name
+        tvAge.text = Child.getCurrentAge(child.birthDate).toString()
+        tvBloodType.text = if (child.bloodType != null) child.bloodType.toString() else ""
+        tvGender.text = child.gender
+        tvWeight.text = if (child.weight != null) child.weight.toString() else ""
         Glide.with(this)
-                .load(child?.photoUri)
+                .load(child.photoUri)
                 .into(childAvatar);
     }
 
-    fun retrieveIllnessesFromDb(){
+    private fun retrieveIllnessesFromDb(){
         childDetailViewModel.getChildIllnesses(child.id)
     }
 
-    fun openAddIllnessScreen(){
+    private fun openAddIllnessScreen(){
         startActivity(Intent(this, NewIllnessActivity::class.java).putExtra(CHILD,child))
-    }
-
-    override fun onDestroy() {
-        childDetailViewModel.disposeObserver()
-        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -149,20 +144,16 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     private fun deleteChild(){
-        childDetailViewModel.deleteChildData(child!!)
+        childDetailViewModel.deleteChildData(child)
     }
 
     private fun openEditChildDataScreen(){
         startActivity(Intent(this,NewChildActivity::class.java).putExtra(CHILD,child))
     }
 
-    override fun onResume() {
-        super.onResume()
-        childDetailViewModel.getChildData(child.id)
-    }
-
-    override fun onStop() {
+    override fun onDestroy() {
+        childDetailViewModel.disposeObserver()
         childDetailViewModel.disposeChildObserver()
-        super.onStop()
+        super.onDestroy()
     }
 }

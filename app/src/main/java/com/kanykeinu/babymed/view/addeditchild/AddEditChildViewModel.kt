@@ -19,6 +19,7 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     private var addChildError: MutableLiveData<String> = MutableLiveData()
     private var addChildComplete : MutableLiveData<Boolean> = MutableLiveData()
     lateinit var  disposableObserver : DisposableObserver<Unit>
+    lateinit var disposableUpdateChildObserver: DisposableObserver<Unit>
 
     fun initDisposableObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
@@ -33,6 +34,21 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
                 addChildError.postValue(e.message)
             }
         }
+
+        //observer for updating child`s data
+        disposableUpdateChildObserver = object : DisposableObserver<Unit>(){
+            override fun onComplete() {
+                addChildComplete.postValue(true)
+            }
+
+            override fun onNext(t: Unit) {
+            }
+
+            override fun onError(e: Throwable) {
+                addChildError.postValue(e.message)
+            }
+
+        }
     }
 
     fun saveChild(child : Child)  {
@@ -40,6 +56,14 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe(disposableObserver)
+    }
+
+    fun updateChild(newChild: Child) {
+        babyMedRepository.updateChild(newChild)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(disposableUpdateChildObserver)
+
     }
 
     fun onComplete() : LiveData<Boolean> {
@@ -53,5 +77,7 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     fun disposeObserver(){
         if (!disposableObserver.isDisposed)
             disposableObserver.dispose()
+        if (!disposableUpdateChildObserver.isDisposed)
+            disposableUpdateChildObserver.dispose()
     }
 }
