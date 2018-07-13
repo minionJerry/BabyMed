@@ -18,19 +18,23 @@ import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModel
 import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModelFactory
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
+import com.tsongkha.spinnerdatepicker.DatePicker
+import com.tsongkha.spinnerdatepicker.DatePickerDialog
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_new_child.*
 import kotlinx.android.synthetic.main.activity_new_illness.*
+import java.text.DateFormatSymbols
+import java.util.*
 import javax.inject.Inject
 
-class NewIllnessActivity : AppCompatActivity() {
-
+class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     @Inject
     lateinit var addIllnessViewModelFactory: AddIllnessViewModelFactory
+
     lateinit var addIllnessViewModel: AddIllnessViewModel
     var child : Child? = null
     var uriTreatmentPhoto : Uri? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectAddChildViewModel()
@@ -40,10 +44,10 @@ class NewIllnessActivity : AppCompatActivity() {
         CroperinoFileUtil.setupDirectory(this)
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
         tvIllnessTitle.append(child?.name)
-        initCurrentDate()
         validateFieldsOnFocus()
         btnAddPhoto.setOnClickListener{CameraRequestHandler.showPictureDialog(this)}
         btnSaveIllness.setOnClickListener{validateFieldsAndAddIllness()}
+        editTextDate.setOnClickListener{setIllnessDate() }
     }
 
     private fun injectAddChildViewModel(){
@@ -69,11 +73,6 @@ class NewIllnessActivity : AppCompatActivity() {
         supportActionBar?.title = ""
     }
 
-    fun initCurrentDate(){
-        editTextDate.setText(Child.getCurrentDate())
-    }
-
-
     private  fun validateFieldsOnFocus(){
         editTextIllnessName.setOnFocusChangeListener{_,focus ->
             if (!focus && editTextIllnessName.text!!.equals(""))
@@ -81,6 +80,7 @@ class NewIllnessActivity : AppCompatActivity() {
             else wrapperIllness.error = null
         }
     }
+
 
     private fun validateFieldsAndAddIllness(){
         if (editTextSymptoms.text.toString().equals("") || editTextTreatment.text.toString().equals("")
@@ -96,7 +96,7 @@ class NewIllnessActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         uriTreatmentPhoto = CameraRequestHandler.handleOnActivityResult(requestCode,resultCode,data,this)
-        editTextTreatment.setCompoundDrawables(null,null,null,Drawable.createFromPath(uriTreatmentPhoto?.path))
+        editTextTreatment.setCompoundDrawablesWithIntrinsicBounds(null,null,null,Drawable.createFromPath(uriTreatmentPhoto?.path))
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -111,6 +111,24 @@ class NewIllnessActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setIllnessDate(){
+        val calendar = Calendar.getInstance()
+        val mm = calendar.get(Calendar.MONTH)
+        val dd = calendar.get(Calendar.DAY_OF_MONTH)
+        val yy = calendar.get(Calendar.YEAR)
+        SpinnerDatePickerDialogBuilder()
+                .context(this)
+                .callback(this)
+                .maxDate(yy,mm,dd)
+                .defaultDate(yy,mm,dd)
+                .build()
+                .show()
+    }
+
+    override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        editTextDate.setText(dayOfMonth.toString() + " " + DateFormatSymbols(Locale.getDefault()).months[monthOfYear] + " " + year.toString())
     }
 
     override fun onDestroy() {

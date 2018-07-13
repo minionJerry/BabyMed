@@ -115,7 +115,6 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         }
     }
 
-
     private fun saveOrUpdateChild(){
         val newChild : Child
         val areFieldsFalidated = validateFields()

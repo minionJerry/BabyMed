@@ -9,28 +9,23 @@
     android:paddingEnd="16dp"
     android:paddingBottom="16dp"
     android:paddingTop="16dp"
+    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tvIllnessName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
-        android:gravity="center_vertical"
         android:textColor="@android:color/black"
-        android:textSize="16sp"
-        tools:text="@sample/tools:first_names" />
+        android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/tvIllChildAge"
-        android:layout_width="0dp"
+        android:id="@+id/tvIllChildIllnessDetails"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.4"
-        android:gravity="center_vertical"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvIllnessName"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@sample/tools:date/hhmmss" />
+        app:layout_constraintTop_toTopOf="parent" />
 </LinearLayout>

@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.R.string.child
 import com.kanykeinu.babymed.utils.Constants.CHILD
-import com.kanykeinu.babymed.view.childdetail.IllnessAdapter.OnAgeSet
 import com.kanykeinu.babymed.view.addeditillness.NewIllnessActivity
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
@@ -51,10 +50,10 @@ class ChildDetailActivity : AppCompatActivity() {
         childDetailViewModel.initDisposableObserver()
 
         childDetailViewModel.onSuccess()
-                .observe(this, Observer<List<Illness>> { children->
-                    if (children != null) {
-                        initChildIllnesses(children)
-                        placeholder.visibility = View.GONE
+                .observe(this, Observer<List<Illness>> { childIllnesses->
+                    if (childIllnesses.isNotEmpty()) {
+                        initChildIllnesses(childIllnesses)
+//                        placeholder.visibility = View.GONE
                     }
                 })
 
@@ -72,7 +71,7 @@ class ChildDetailActivity : AppCompatActivity() {
 
         childDetailViewModel.onCompleteDeleting()
                 .observe(this, Observer { isDeleted ->
-                    showToast("Child is successfully deleted")
+                    showToast(getString(R.string.child_is_deleted))
                 })
 
         childDetailViewModel.onGetChildData()
@@ -82,9 +81,9 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     private fun initChildIllnesses(illnesses : List<Illness>) {
-        val illnessAdapter = IllnessAdapter(this, illnesses, object : OnAgeSet {
-            override fun getChildAge(id: Long): Int {
-                return Child.getCurrentAge(child.birthDate)
+        val illnessAdapter = IllnessAdapter(this, illnesses, object : IllnessAdapter.OnAgeAndWeightSet {
+            override fun getChildAge(id: Long): Child {
+                return child
             }
 
         })
