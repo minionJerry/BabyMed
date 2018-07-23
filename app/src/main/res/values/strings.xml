@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BabyMed</string>
     <string name="add_child">Add Child</string>
-    <string name="my_children">My children</string>
+    <string name="my_children">Мои дети</string>
     <string name="add_new_child">Add one more child</string>
     <string name="child">child</string>
     <string name="avatar_selection">Выберите аватар</string>
@@ -37,7 +37,7 @@
     <string name="name">Имя</string>
     <string name="age">Возраст</string>
     <string name="child_diseases">Перенесенные заболевания</string>
-    <string name="new_illness">Новое заболевание</string>
+    <string name="new_illness">Новое заболевание  </string>
     <string name="illness_name">Название заболевания</string>
     <string name="date">Дата</string>
     <string name="symptoms">Симптомы</string>
