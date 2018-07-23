@@ -38,6 +38,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="@string/name"
+                    android:fontFamily="@font/rubik_light"
                     android:inputType="textPersonName" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -61,6 +62,7 @@
                     android:ems="10"
                     android:focusable="false"
                     android:hint="@string/birthdate"
+                    android:fontFamily="@font/rubik_light"
                     android:inputType="date" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -84,6 +86,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="@string/weight"
+                    android:fontFamily="@font/rubik_light"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -105,6 +108,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="@string/blood_type"
+                    android:fontFamily="@font/rubik_light"
                     android:inputType="number"
                     tools:layout_editor_absoluteX="0dp"
                     tools:layout_editor_absoluteY="186dp" />
@@ -140,6 +144,7 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:hint="@string/gender"
+                    android:fontFamily="@font/rubik_light"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -161,6 +166,7 @@
                 android:layout_marginEnd="64dp"
                 android:layout_marginBottom="24dp"
                 android:text="@string/save"
+                android:fontFamily="@font/rubik"
                 app:cornerRadius="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
