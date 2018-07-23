@@ -28,10 +28,10 @@ class ChildrenAdapter(private val mContext: Context, private var objects: Mutabl
 
     override fun onBindViewHolder(holder: ChildHolder, position: Int) {
         holder.bind(objects.get(position),mContext)
-        holder.listen({ pos, _ ->
+        holder.listen{ pos, _ ->
             val item = objects.get(pos)
             onChildItemClick.onChildClick(item)
-        })
+        }
     }
 
     fun addChildrenToList(children: List<Child>){
@@ -43,7 +43,7 @@ class ChildrenAdapter(private val mContext: Context, private var objects: Mutabl
     class ChildHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         fun bind(child: Child, mContext: Context) {
             itemView.childName.text = child.name
-            itemView.childAge.text = Child.getCurrentAge(childBirthDate = child.birthDate).toString() + " лет"
+            itemView.childAge.text =  mContext.getString(R.string.child_age,Child.getCurrentAge(childBirthDate = child.birthDate).toString())
             if (child.photoUri!=null)
                  Glide.with(mContext)
                     .load(child.photoUri)

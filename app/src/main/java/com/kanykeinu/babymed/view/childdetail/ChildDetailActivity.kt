@@ -55,7 +55,6 @@ class ChildDetailActivity : AppCompatActivity() {
                 .observe(this, Observer<List<Illness>> { childIllnesses->
                     if (childIllnesses.isNotEmpty()) {
                         initChildIllnesses(childIllnesses)
-//                        placeholder.visibility = View.GONE
                     }
                 })
 
@@ -132,7 +131,7 @@ class ChildDetailActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.delete -> {
-                DialogView.deletingConfirm(this, object : OnDialogItemSelected{
+                DialogView.deletingConfirm(this, getString(R.string.deleting_child_data_confirm),object : OnDialogItemSelected{
                     override fun onDialogClicked() {
                         deleteChild()
                         finish()

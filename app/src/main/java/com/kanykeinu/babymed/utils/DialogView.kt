@@ -23,17 +23,17 @@ class DialogView {
             alert.show()
         }
 
-        fun deletingConfirm(context: Context, onDialogItemSelected: OnDialogItemSelected) {
+        fun deletingConfirm(context: Context, message : String, onDialogItemSelected: OnDialogItemSelected) {
             val alert = AlertDialog.Builder(context, R.style.DialogTheme)
-            alert.setTitle("Предупреждение!")
-            alert.setMessage("Вы уверены, что хотите безвозвратно удалить данные об этом ребенке?")
-            alert.setPositiveButton("Да", object : DialogInterface.OnClickListener{
+            alert.setTitle(context.getString(R.string.warning))
+            alert.setMessage(message)
+            alert.setPositiveButton(context.getString(R.string.yes), object : DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     onDialogItemSelected.onDialogClicked()
                 }
 
             })
-            alert.setNegativeButton("Нет",object : DialogInterface.OnClickListener{
+            alert.setNegativeButton(context.getString(R.string.no),object : DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
 
                 }

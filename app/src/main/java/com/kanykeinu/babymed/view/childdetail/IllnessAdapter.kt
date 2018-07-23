@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.illness_list_item.view.*
 
 class IllnessAdapter(private val mContext: Context, private var objects: List<Illness>, private var onAgeSet: OnAgeAndWeightSet, private var onIllnessClick: OnIllnessClick) : RecyclerView.Adapter<IllnessAdapter.IllnessHolder>() {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IllnessHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.illness_list_item,parent,false)
         return IllnessHolder(view)

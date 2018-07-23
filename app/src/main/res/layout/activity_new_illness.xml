@@ -21,16 +21,17 @@
             <TextView
                 android:id="@+id/tvIllnessTitle"
                 android:layout_width="wrap_content"
-                android:layout_height="29dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="24dp"
                 android:fontFamily="@font/rubik_medium"
-                android:text="Новое заболевание "
+                android:text="@string/new_illness"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/wrapperIllness"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.547"
+                app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -50,7 +51,8 @@
                     android:id="@+id/editTextIllnessName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Название заболевания"
+                    android:fontFamily="@font/rubik_light"
+                    android:hint="@string/illness_name"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,14 +75,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:hint="Дата"
+                    android:hint="@string/date"
+                    android:fontFamily="@font/rubik_light"
                     android:inputType="date" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <EditText
                 android:id="@+id/editTextSymptoms"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
@@ -108,22 +111,23 @@
 
             <TextView
                 android:id="@+id/tvSymptoms"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Симптомы"
+                android:fontFamily="@font/rubik_light"
+                android:text="@string/symptoms"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/wrapperDate" />
 
             <TextView
                 android:id="@+id/tvTreatment"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="Лечение"
+                android:fontFamily="@font/rubik_light"
+                android:text="@string/treatment"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextSymptoms" />
 
@@ -133,7 +137,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
-                android:text="Добавить фото"
+                android:text="@string/add_photo"
+                android:fontFamily="@font/rubik"
                 app:cornerRadius="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/editTextTreatment" />
@@ -146,7 +151,8 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="64dp"
                 android:layout_marginBottom="24dp"
-                android:text="Сохранить"
+                android:text="@string/save"
+                android:fontFamily="@font/rubik"
                 app:cornerRadius="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
