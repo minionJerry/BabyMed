@@ -17,10 +17,12 @@ import com.kanykeinu.babymed.view.addeditillness.NewIllnessActivity
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.utils.Constants
+import com.kanykeinu.babymed.utils.Constants.ILLNESS
 import com.kanykeinu.babymed.utils.DialogView
 import com.kanykeinu.babymed.utils.OnDialogItemSelected
 import com.kanykeinu.babymed.utils.showToast
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
+import com.kanykeinu.babymed.view.illnessdetail.IllnessDetailActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_medical_file.*
 import javax.inject.Inject
@@ -86,6 +88,10 @@ class ChildDetailActivity : AppCompatActivity() {
                 return child
             }
 
+        }, object  : IllnessAdapter.OnIllnessClick{
+            override fun onIllnessClick(illness: Illness) {
+                startActivity(Intent(baseContext,IllnessDetailActivity::class.java).putExtra(ILLNESS,illness).putExtra(CHILD,child))
+            }
         })
         val illnessLinearManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerIllnesses.layoutManager = illnessLinearManager
@@ -107,7 +113,7 @@ class ChildDetailActivity : AppCompatActivity() {
         tvWeight.text = if (child.weight != null) child.weight.toString() else ""
         Glide.with(this)
                 .load(child.photoUri)
-                .into(childAvatar);
+                .into(childAvatar)
     }
 
     private fun retrieveIllnessesFromDb(){

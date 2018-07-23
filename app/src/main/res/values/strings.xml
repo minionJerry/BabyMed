@@ -19,4 +19,6 @@
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
     <string name="child_is_deleted">Данные о ребенке удалены</string>
+    <string name="illness_descrip"> %1$s болела %2$s</string>
+    <string name="illness_list_item_descrip">в %1$d лет при массе %2$d кг</string>
 </resources>

@@ -47,7 +47,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         validateFieldsOnFocus()
         btnAddPhoto.setOnClickListener{CameraRequestHandler.showPictureDialog(this)}
         btnSaveIllness.setOnClickListener{validateFieldsAndAddIllness()}
-        editTextDate.setOnClickListener{setIllnessDate() }
+        editTextDate.setOnClickListener{setIllnessDate()}
     }
 
     private fun injectAddChildViewModel(){
@@ -81,14 +81,13 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
     }
 
-
     private fun validateFieldsAndAddIllness(){
         if (editTextSymptoms.text.toString().equals("") || editTextTreatment.text.toString().equals("")
                 || editTextIllnessName.text!!.equals(""))
             showToast(getString(R.string.empty_fields_not_allowed))
         else {
             val illness = Illness(0, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
-                    uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id)
+                    uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
             addIllnessViewModel.saveIllness(illness)
         }
     }
@@ -128,7 +127,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        editTextDate.setText(dayOfMonth.toString() + " " + DateFormatSymbols(Locale.getDefault()).months[monthOfYear] + " " + year.toString())
+        editTextDate.setText("""${dayOfMonth} ${DateFormatSymbols(Locale.getDefault()).months[monthOfYear]} ${year}""")
     }
 
     override fun onDestroy() {

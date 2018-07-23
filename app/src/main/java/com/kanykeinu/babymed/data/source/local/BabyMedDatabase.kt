@@ -9,7 +9,7 @@ import com.kanykeinu.babymed.data.source.local.dao.ChildDao
 import com.kanykeinu.babymed.data.source.local.dao.IllnessDao
 
 
-@Database(entities = arrayOf(Child::class, Illness::class), version = 6)
+@Database(entities = arrayOf(Child::class, Illness::class), version = 7)
 abstract class BabyMedDatabase : RoomDatabase() {
     abstract fun childDao(): ChildDao
     abstract fun illnessDao(): IllnessDao

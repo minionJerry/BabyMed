@@ -30,7 +30,7 @@ data class Child(
   companion object {
 
       fun getCurrentAge(childBirthDate: String): Int {
-          val birthDate = DateTimeFormat.forPattern(DATE_FORMAT);
+          val birthDate = DateTimeFormat.forPattern(DATE_FORMAT)
           val date: LocalDate = birthDate.parseLocalDate(childBirthDate)
           val now = LocalDate() // test, in real world without args
           val age = Years.yearsBetween(date, now)
@@ -40,6 +40,14 @@ data class Child(
       fun getCurrentDate(): String {
           val date: String = LocalDate().toString(DATE_FORMAT)
           return date
+      }
+
+      fun getIllnessAge(childBirthDate: String, illnessDateString : String) : Int{
+          val dateFormat = DateTimeFormat.forPattern(DATE_FORMAT)
+          val birthDate = dateFormat.parseLocalDate(childBirthDate)
+          val illnessDate = dateFormat.parseLocalDate(illnessDateString)
+          val illnessAge = Years.yearsBetween(birthDate,illnessDate)
+          return illnessAge.years
       }
   }
 }
