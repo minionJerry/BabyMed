@@ -18,7 +18,8 @@
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
     <string name="child_is_deleted">Данные о ребенке удалены</string>
-    <string name="illness_descrip"> %1$s болела %2$s</string>
+    <string name="illness_descrip_female"> %1$s болела %2$s</string>
+    <string name="illness_descrip_male"> %1$s болел %2$s</string>
     <string name="illness_list_item_descrip">  в %1$d лет при массе %2$d кг</string>
     <string name="warning">Предупреждение!</string>
     <string name="deleting_child_data_confirm">Вы уверены, что хотите безвозвратно удалить данные об этом ребенке?</string>
@@ -43,4 +44,7 @@
     <string name="symptoms">Симптомы</string>
     <string name="treatment">Лечение</string>
     <string name="add_photo">Добавить фото</string>
+    <string name="illness">Заболевание</string>
+    <string name="illness_is_deleted">Данные о заболевании успешно удалены</string>
+    <string name="illness_editing">Редактирование заболевания %1$s</string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import com.kanykeinu.babymed.di.component.DaggerAppComponent
 import com.kanykeinu.babymed.di.modules.AppModule
+import com.squareup.leakcanary.LeakCanary
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -18,6 +19,13 @@ class BabyMedApplication : Application(), HasActivityInjector {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this)
 
         DaggerAppComponent.builder()
                 .appModule(AppModule(this))

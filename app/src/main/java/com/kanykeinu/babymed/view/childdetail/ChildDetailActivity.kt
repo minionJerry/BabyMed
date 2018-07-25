@@ -16,11 +16,8 @@ import com.kanykeinu.babymed.utils.Constants.CHILD
 import com.kanykeinu.babymed.view.addeditillness.NewIllnessActivity
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
-import com.kanykeinu.babymed.utils.Constants
+import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.ILLNESS
-import com.kanykeinu.babymed.utils.DialogView
-import com.kanykeinu.babymed.utils.OnDialogItemSelected
-import com.kanykeinu.babymed.utils.showToast
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
 import com.kanykeinu.babymed.view.illnessdetail.IllnessDetailActivity
 import dagger.android.AndroidInjection
@@ -61,7 +58,7 @@ class ChildDetailActivity : AppCompatActivity() {
         childDetailViewModel.onError()
                 .observe(this, Observer { error->
                     if (error!=null)
-                        showToast(error)
+                        showErrorToast(error)
                 })
 
         childDetailViewModel.onLoading()
@@ -72,7 +69,7 @@ class ChildDetailActivity : AppCompatActivity() {
 
         childDetailViewModel.onCompleteDeleting()
                 .observe(this, Observer { isDeleted ->
-                    showToast(getString(R.string.child_is_deleted))
+                    showSuccessToast(getString(R.string.child_is_deleted))
                 })
 
         childDetailViewModel.onGetChildData()

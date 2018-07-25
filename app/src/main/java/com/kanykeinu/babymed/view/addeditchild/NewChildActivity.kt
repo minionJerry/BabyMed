@@ -14,13 +14,11 @@ import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.utils.Constants.DIRECTORY
 import com.kanykeinu.babymed.utils.Constants.RAW_DIRECTORY
 import com.kanykeinu.babymed.data.source.local.entity.Child
-import com.kanykeinu.babymed.utils.CameraRequestHandler
+import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleOnActivityResult
 import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleRequestPermissionResult
 import com.kanykeinu.babymed.utils.Constants.CHILD
 import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
-import com.kanykeinu.babymed.utils.DialogView
-import com.kanykeinu.babymed.utils.showToast
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
 import com.tsongkha.spinnerdatepicker.DatePicker
@@ -66,11 +64,11 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
 
         addEditChildViewModel.onError().observe( this, androidx.lifecycle.Observer { error ->
             if (error!=null)
-                showToast(error)
+                showErrorToast(error)
         })
 
         addEditChildViewModel.onComplete().observe(this, androidx.lifecycle.Observer {
-            showToast(getString(R.string.data_saved))
+            showSuccessToast(getString(R.string.data_saved))
             finish()
         })
     }

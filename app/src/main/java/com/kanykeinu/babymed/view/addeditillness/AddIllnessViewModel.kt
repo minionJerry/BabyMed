@@ -15,6 +15,8 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     private var addIllnessError: MutableLiveData<String> = MutableLiveData()
     private var addIllnessComplete : MutableLiveData<Boolean> = MutableLiveData()
     lateinit var  disposableObserver : DisposableObserver<Unit>
+    lateinit var  disposableUpdatingObserver : DisposableObserver<Unit>
+    private var illnessUpdatingComplete : MutableLiveData<Boolean> = MutableLiveData()
 
     fun initDisposableObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
@@ -29,6 +31,20 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
                 addIllnessError.postValue(e.message)
             }
         }
+
+        disposableUpdatingObserver = object  : DisposableObserver<Unit>() {
+            override fun onComplete() {
+                illnessUpdatingComplete.postValue(true)
+            }
+
+            override fun onNext(t: Unit) {
+            }
+
+            override fun onError(e: Throwable) {
+                addIllnessError.postValue(e.message)
+            }
+
+        }
     }
 
     fun saveIllness(illness : Illness)  {
@@ -38,8 +54,19 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
                 ?.subscribe(disposableObserver)
     }
 
+    fun updateIllness(illness: Illness){
+        babyMedRepository.updateIllness(illness)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(disposableUpdatingObserver)
+    }
+
     fun onComplete() : LiveData<Boolean> {
         return addIllnessComplete
+    }
+
+    fun onSuccessUpdating(): LiveData<Boolean> {
+        return illnessUpdatingComplete
     }
 
     fun onError() : LiveData<String> {
@@ -49,5 +76,8 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     fun disposeObserver(){
         if (!disposableObserver.isDisposed)
             disposableObserver.dispose()
+
+        if (!disposableUpdatingObserver.isDisposed)
+            disposableUpdatingObserver.dispose()
     }
 }

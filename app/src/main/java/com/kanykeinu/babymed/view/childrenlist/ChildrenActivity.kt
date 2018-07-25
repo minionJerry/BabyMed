@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.utils.Constants
-import com.kanykeinu.babymed.utils.showToast
+import com.kanykeinu.babymed.utils.showErrorToast
+import com.kanykeinu.babymed.utils.showInfoToast
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
 import com.kanykeinu.babymed.view.childdetail.ChildDetailActivity
 import dagger.android.AndroidInjection
@@ -56,7 +57,7 @@ class ChildrenActivity : AppCompatActivity() {
         childrenViewModel.onError()
                 .observe(this, Observer { error->
                     if (error!=null)
-                        showToast(error)
+                        showErrorToast(error)
                 })
 
         childrenViewModel.onLoader()
@@ -100,7 +101,7 @@ class ChildrenActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
-            R.id.settings -> showToast("Settings is clicked")
+            R.id.settings -> showInfoToast("Settings is clicked")
         }
         return super.onOptionsItemSelected(item)
     }

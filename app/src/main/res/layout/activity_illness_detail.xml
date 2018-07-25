@@ -40,8 +40,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/rubik"
-        android:text="Заболевание"
+        android:fontFamily="@font/rubik_light"
+        android:text="@string/illness"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.038"
@@ -71,8 +71,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/rubik"
-        android:text="Симптомы"
+        android:fontFamily="@font/rubik_light"
+        android:text="@string/symptoms"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.035"
@@ -102,8 +102,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/rubik"
-        android:text="Лечение"
+        android:fontFamily="@font/rubik_light"
+        android:text="@string/treatment"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.034"
@@ -137,7 +137,8 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTreatment" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTreatment"
+        tools:srcCompat="@color/colorSecondary" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

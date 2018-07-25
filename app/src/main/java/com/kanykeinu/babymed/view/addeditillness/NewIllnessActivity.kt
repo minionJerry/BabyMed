@@ -4,16 +4,17 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProviders
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
-import com.kanykeinu.babymed.utils.CameraRequestHandler
-import com.kanykeinu.babymed.utils.Constants
+import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
-import com.kanykeinu.babymed.utils.showToast
 import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModel
 import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModelFactory
 import com.mikelau.croperino.CroperinoConfig
@@ -22,6 +23,7 @@ import com.tsongkha.spinnerdatepicker.DatePicker
 import com.tsongkha.spinnerdatepicker.DatePickerDialog
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.activity_illness_detail.*
 import kotlinx.android.synthetic.main.activity_new_child.*
 import kotlinx.android.synthetic.main.activity_new_illness.*
 import java.text.DateFormatSymbols
@@ -31,19 +33,26 @@ import javax.inject.Inject
 class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     @Inject
     lateinit var addIllnessViewModelFactory: AddIllnessViewModelFactory
-
     lateinit var addIllnessViewModel: AddIllnessViewModel
-    var child : Child? = null
-    var uriTreatmentPhoto : Uri? = null
+    private var child : Child? = null
+    private var illness : Illness? = null
+    private var uriTreatmentPhoto : Uri? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectAddChildViewModel()
         setContentView(R.layout.activity_new_illness)
         initActionBar()
-        CroperinoConfig(PHOTO_NAME, Constants.DIRECTORY, Constants.RAW_DIRECTORY)
-        CroperinoFileUtil.setupDirectory(this)
+        setupCameraConfigs()
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
-        tvIllnessTitle.append(child?.name)
+        illness = intent.getParcelableExtra(Constants.ILLNESS)
+        if (illness == null) tvIllnessTitle.append(child?.name)
+        else {
+            tvIllnessTitle.setText(getString(R.string.illness_editing, child?.name))
+            tvIllnessTitle.gravity = Gravity.CENTER
+            uriTreatmentPhoto = Uri.parse(illness?.treatmentPhotoUri)
+        }
+        fillFields()
         validateFieldsOnFocus()
         btnAddPhoto.setOnClickListener{CameraRequestHandler.showPictureDialog(this)}
         btnSaveIllness.setOnClickListener{validateFieldsAndAddIllness()}
@@ -57,12 +66,19 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         addIllnessViewModel.onError().observe( this, androidx.lifecycle.Observer { error ->
             if (error!=null)
-                showToast(error)
+                showErrorToast(error)
         })
 
         addIllnessViewModel.onComplete().observe(this, androidx.lifecycle.Observer {
-            showToast(getString(R.string.data_saved))
+            showInfoToast(getString(R.string.data_saved))
             finish()
+        })
+
+        addIllnessViewModel.onSuccessUpdating().observe(this, androidx.lifecycle.Observer { isUpdated ->
+            if (isUpdated) {
+                showSuccessToast(getString(R.string.data_saved))
+                finish()
+            }
         })
     }
 
@@ -71,6 +87,22 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
+    }
+
+    private fun setupCameraConfigs(){
+        CroperinoConfig(PHOTO_NAME, Constants.DIRECTORY, Constants.RAW_DIRECTORY)
+        CroperinoFileUtil.setupDirectory(this)
+    }
+
+    private fun fillFields(){
+        if (illness!=null){
+            editTextIllnessName.setText(illness!!.name)
+            editTextDate.setText(illness!!.date)
+            editTextSymptoms.setText(illness!!.symptoms)
+            editTextTreatment.setText(illness!!.treatment)
+            imgViewTreatmentPhoto.visibility = View.VISIBLE
+            imgViewTreatmentPhoto.setImageURI(Uri.parse(illness!!.treatmentPhotoUri))
+        }
     }
 
     private  fun validateFieldsOnFocus(){
@@ -84,18 +116,33 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private fun validateFieldsAndAddIllness(){
         if (editTextSymptoms.text.toString().equals("") || editTextTreatment.text.toString().equals("")
                 || editTextIllnessName.text!!.equals(""))
-            showToast(getString(R.string.empty_fields_not_allowed))
+            showErrorToast(getString(R.string.empty_fields_not_allowed))
         else {
-            val illness = Illness(0, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
-                    uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
-            addIllnessViewModel.saveIllness(illness)
+            if (illness!=null)
+                updateExistingIllness()
+            else saveNewIllness()
         }
+    }
+
+    private fun updateExistingIllness(){
+        val illnessId = illness!!.id
+        val illness = Illness(illnessId, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
+                      uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
+        addIllnessViewModel.updateIllness(illness)
+    }
+
+
+    private fun saveNewIllness(){
+        val illness = Illness(0, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
+                      uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
+        addIllnessViewModel.saveIllness(illness)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         uriTreatmentPhoto = CameraRequestHandler.handleOnActivityResult(requestCode,resultCode,data,this)
-        editTextTreatment.setCompoundDrawablesWithIntrinsicBounds(null,null,null,Drawable.createFromPath(uriTreatmentPhoto?.path))
+        imgViewTreatmentPhoto.setImageURI(uriTreatmentPhoto)
+        imgViewTreatmentPhoto.visibility = View.VISIBLE
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -127,7 +174,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        editTextDate.setText("""${dayOfMonth} ${DateFormatSymbols(Locale.getDefault()).months[monthOfYear]} ${year}""")
+        editTextDate.setText("${dayOfMonth} ${DateFormatSymbols(Locale.getDefault()).months[monthOfYear]} ${year}")
     }
 
     override fun onDestroy() {

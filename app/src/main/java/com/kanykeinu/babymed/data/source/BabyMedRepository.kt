@@ -39,4 +39,16 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
     fun updateChild(newChild: Child) : Observable<Unit> {
         return Observable.fromCallable { childDao.update(newChild)}
     }
+
+    fun updateIllness(illness: Illness) : Observable<Unit>{
+        return Observable.fromCallable{ illnessDao.update(illness)}
+    }
+
+    fun deleteIllness(illness: Illness) : Observable<Unit>{
+        return Observable.fromCallable{illnessDao.delete(illness)}
+    }
+
+    fun getIllnessbyId(id: Long) : Observable<Illness>{
+        return illnessDao.getById(id).toObservable()
+    }
 }

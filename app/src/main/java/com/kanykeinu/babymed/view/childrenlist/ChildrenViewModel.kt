@@ -32,7 +32,6 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
     fun getChildrenList(){
         disposableObserver = object : DisposableObserver<List<Child>>(){
             override fun onComplete() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onNext(t: List<Child>) {
@@ -44,7 +43,6 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
                 childrenError.postValue(e.message)
                 childrenLoader.postValue(false)
             }
-
         }
 
     babyMedRepository.getChildrenFromDb()
