@@ -1,49 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tvIllChildIllnessDetails"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tvIllnessName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="fytfghj  "
-            android:textColor="@android:color/black"
-            android:fontFamily="@font/rubik"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tvIllChildIllnessDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="jhvjhbhjb"
-            android:textColor="@android:color/black"
-            android:fontFamily="@font/rubik"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvIllnessName"
-            app:layout_constraintTop_toTopOf="parent" />
-    </LinearLayout>
+        android:text="fytfghj "
+        android:textColor="@android:color/black"
+        android:fontFamily="@font/rubik"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:background="@android:color/darker_gray"
      />
 

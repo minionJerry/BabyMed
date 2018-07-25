@@ -28,14 +28,14 @@ class IllnessAdapter(private val mContext: Context, private var objects: List<Il
         val illness = objects.get(position)
         holder.bind(illness)
         val child : Child = onAgeSet.getChildAge(illness.childId)
-        holder.getChildAgeEditText()?.text = mContext.getString(R.string.illness_list_item_descrip,Child.getIllnessAge(child.birthDate, illness.date),illness.illnessWeight)
+        holder.getChildAgeEditText()?.append(" " + mContext.getString(R.string.illness_list_item_descrip,Child.getIllnessAge(child.birthDate, illness.date),illness.illnessWeight))
         holder.listen { pos, type -> onIllnessClick.onIllnessClick(illness)  }
     }
 
     class IllnessHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(illness: Illness) {
-            itemView.tvIllnessName.text = illness.name
+            itemView.tvIllChildIllnessDetails.text = illness.name
         }
 
         fun getChildAgeEditText() : TextView? {
