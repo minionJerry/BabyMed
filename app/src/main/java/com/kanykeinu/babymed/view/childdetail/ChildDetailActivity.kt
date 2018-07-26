@@ -1,6 +1,7 @@
 package com.kanykeinu.babymed.view.childdetail
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -107,9 +108,7 @@ class ChildDetailActivity : AppCompatActivity() {
         tvBloodType.text = if (child.bloodType != null) child.bloodType.toString() else ""
         tvGender.text = child.gender
         tvWeight.text = if (child.weight != null) child.weight.toString() else ""
-        Glide.with(this)
-                .load(child.photoUri)
-                .into(childAvatar)
+        childAvatar.setImageURI(Uri.parse(child.photoUri))
     }
 
     private fun retrieveIllnessesFromDb(){

@@ -86,7 +86,9 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
             editTextWeight.setText(child.weight.toString())
             editTextBloodType.setText(child.bloodType.toString())
             editTextGender.setText(child.gender)
-            imgChildPhoto.setImageURI(Uri.parse(child.photoUri))
+            uriPhoto = Uri.parse(child.photoUri)
+            if (!uriPhoto.toString().equals("null"))
+                imgChildPhoto.setImageURI(uriPhoto)
     }
 
     private fun setupCameraCropConfigs(){
@@ -98,6 +100,9 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         when(v){
             btnSave -> {
                 saveOrUpdateChild()
+            }
+            imageButton -> {
+                CameraRequestHandler.showPictureDialog(this)
             }
             imgChildPhoto -> {
                 CameraRequestHandler.showPictureDialog(this)
@@ -134,7 +139,6 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
                 addEditChildViewModel.updateChild(newChild)
             }
         }
-
     }
 
     private fun validateFields() : Boolean{

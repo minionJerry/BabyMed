@@ -2,6 +2,7 @@ package com.kanykeinu.babymed.view.childrenlist
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,11 +46,8 @@ class ChildrenAdapter(private val mContext: Context, private var objects: Mutabl
             itemView.childName.text = child.name
             itemView.childAge.text =  mContext.getString(R.string.child_age,Child.getCurrentAge(childBirthDate = child.birthDate).toString())
             if (child.photoUri!=null)
-                 Glide.with(mContext)
-                    .load(child.photoUri)
-                    .into(itemView.childPhoto);
+                itemView.childPhoto.setImageURI(Uri.parse(child.photoUri))
         }
-
     }
 }
 

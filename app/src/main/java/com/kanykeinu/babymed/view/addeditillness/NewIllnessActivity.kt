@@ -46,7 +46,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         setupCameraConfigs()
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
         illness = intent.getParcelableExtra(Constants.ILLNESS)
-        if (illness == null) tvIllnessTitle.append(child?.name)
+        if (illness == null) tvIllnessTitle.append(" " + child?.name)
         else {
             tvIllnessTitle.setText(getString(R.string.illness_editing, child?.name))
             tvIllnessTitle.gravity = Gravity.CENTER
@@ -115,7 +115,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private fun validateFieldsAndAddIllness(){
         if (editTextSymptoms.text.toString().equals("") || editTextTreatment.text.toString().equals("")
-                || editTextIllnessName.text!!.equals(""))
+                || editTextIllnessName.text!!.equals("") || editTextDate.text.toString().equals(""))
             showErrorToast(getString(R.string.empty_fields_not_allowed))
         else {
             if (illness!=null)

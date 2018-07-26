@@ -36,7 +36,7 @@ class CameraRequestHandler {
                                 && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                             Croperino.prepareCamera(context)
                         else requestCameraPermission(context)
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         e.printStackTrace()
                     }
 
@@ -44,15 +44,6 @@ class CameraRequestHandler {
             }
             pictureDialog.show()
         }
-
-
-        fun allowToPickAvatar(requestCode : Int, context: Activity){
-            when (requestCode){
-                REQUEST_CODE_CAMERA -> Croperino.prepareCamera(context)
-                REQUEST_CODE_GALLERY -> Croperino.prepareGallery(context)
-            }
-        }
-
 
         private fun requestCameraPermission(context: Activity) {
             ActivityCompat.requestPermissions(context,
@@ -97,6 +88,13 @@ class CameraRequestHandler {
                     }
                 }
                 else -> {}
+            }
+        }
+
+        fun allowToPickAvatar(requestCode : Int, context: Activity){
+            when (requestCode){
+                REQUEST_CODE_CAMERA -> Croperino.prepareCamera(context)
+                REQUEST_CODE_GALLERY -> Croperino.prepareGallery(context)
             }
         }
     }
