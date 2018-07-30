@@ -30,8 +30,7 @@ class ChildDetailActivity : AppCompatActivity() {
     @Inject
     lateinit var childDetailViewModelFactory: ChildDetailViewModelFactory
     lateinit var childDetailViewModel: ChildDetailViewModel
-    lateinit var child : Child
-
+    private var child : Child? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +38,7 @@ class ChildDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_medical_file)
         initActionBar()
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
-        childDetailViewModel.getChildData(child.id)
+        childDetailViewModel.getChildData(child!!.id)
         retrieveIllnessesFromDb()
         fabAddIllness.setOnClickListener { openAddIllnessScreen() }
     }
@@ -82,7 +81,7 @@ class ChildDetailActivity : AppCompatActivity() {
     private fun initChildIllnesses(illnesses : List<Illness>) {
         val illnessAdapter = IllnessAdapter(this, illnesses, object : IllnessAdapter.OnAgeAndWeightSet {
             override fun getChildAge(id: Long): Child {
-                return child
+                return child!!
             }
 
         }, object  : IllnessAdapter.OnIllnessClick{
@@ -112,7 +111,7 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     private fun retrieveIllnessesFromDb(){
-        childDetailViewModel.getChildIllnesses(child.id)
+        childDetailViewModel.getChildIllnesses(child!!.id)
     }
 
     private fun openAddIllnessScreen(){
@@ -144,7 +143,7 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     private fun deleteChild(){
-        childDetailViewModel.deleteChildData(child)
+        childDetailViewModel.deleteChildData(child!!)
     }
 
     private fun openEditChildDataScreen(){

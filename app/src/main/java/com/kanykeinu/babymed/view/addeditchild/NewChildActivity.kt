@@ -15,8 +15,6 @@ import com.kanykeinu.babymed.utils.Constants.DIRECTORY
 import com.kanykeinu.babymed.utils.Constants.RAW_DIRECTORY
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.utils.*
-import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleOnActivityResult
-import com.kanykeinu.babymed.utils.CameraRequestHandler.Companion.handleRequestPermissionResult
 import com.kanykeinu.babymed.utils.Constants.CHILD
 import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
 import com.mikelau.croperino.CroperinoConfig
@@ -39,6 +37,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     lateinit var addEditChildViewModel: AddEditChildViewModel
     private var uriPhoto: Uri? = null
     private var child : Child? = null
+    lateinit var cameraRequestHandler: CameraRequestHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +91,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     }
 
     private fun setupCameraCropConfigs(){
+        cameraRequestHandler = CameraRequestHandler(this)
         CroperinoConfig(PHOTO_NAME, DIRECTORY, RAW_DIRECTORY)
         CroperinoFileUtil.setupDirectory(this)
     }
@@ -102,10 +102,10 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
                 saveOrUpdateChild()
             }
             imageButton -> {
-                CameraRequestHandler.showPictureDialog(this)
+                cameraRequestHandler.showPictureDialog()
             }
             imgChildPhoto -> {
-                CameraRequestHandler.showPictureDialog(this)
+                cameraRequestHandler.showPictureDialog()
             }
             editTextGender -> {
                 DialogView.genderDialog(this, WeakReference(editTextGender))
@@ -182,7 +182,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val uri : Uri?  = handleOnActivityResult(requestCode,resultCode,data,this)
+        val uri : Uri?  = cameraRequestHandler.handleOnActivityResult(requestCode,resultCode,data)
         if (uri!=null)
         {
             imgChildPhoto.setImageURI(uri)
@@ -191,7 +191,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        handleRequestPermissionResult(requestCode,grantResults,this)
+        cameraRequestHandler.handleRequestPermissionResult(requestCode,grantResults)
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {

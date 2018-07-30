@@ -32,7 +32,6 @@ android {
 dependencies {
     def lifecycle_version = "2.0.0-alpha1"
     def lifecycle_ext_version = "2.0.0-beta01"
-    def rxJavaAdapterVersion = "2.3.0"
     def rxAndroidVersion = "2.0.2"
     def rxJava2Version = "2.1.0"
     def constraint_version = "2.0.0-alpha1"
@@ -53,6 +52,9 @@ dependencies {
     //Test
     implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
+    implementation 'com.google.android.material:material:1.0.0-beta01'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
     androidTestImplementation "androidx.test:runner:$test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     //Room

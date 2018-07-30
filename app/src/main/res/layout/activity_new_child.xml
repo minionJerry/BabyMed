@@ -183,7 +183,7 @@
                 android:fontFamily="@font/rubik_medium"
                 android:text="@string/my_child"
                 android:textSize="20sp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toTopOf="@+id/imgChildPhoto"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.47"

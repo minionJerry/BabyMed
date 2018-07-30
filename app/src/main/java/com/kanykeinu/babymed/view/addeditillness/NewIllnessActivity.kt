@@ -1,30 +1,24 @@
 package com.kanykeinu.babymed.view.addeditillness
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProviders
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
-import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModel
-import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModelFactory
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
 import com.tsongkha.spinnerdatepicker.DatePicker
 import com.tsongkha.spinnerdatepicker.DatePickerDialog
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_illness_detail.*
-import kotlinx.android.synthetic.main.activity_new_child.*
 import kotlinx.android.synthetic.main.activity_new_illness.*
 import java.text.DateFormatSymbols
 import java.util.*
@@ -37,6 +31,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private var child : Child? = null
     private var illness : Illness? = null
     private var uriTreatmentPhoto : Uri? = null
+    lateinit var cameraRequestHandler: CameraRequestHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +49,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
         fillFields()
         validateFieldsOnFocus()
-        btnAddPhoto.setOnClickListener{CameraRequestHandler.showPictureDialog(this)}
+        btnAddPhoto.setOnClickListener{cameraRequestHandler.showPictureDialog()}
         btnSaveIllness.setOnClickListener{validateFieldsAndAddIllness()}
         editTextDate.setOnClickListener{setIllnessDate()}
     }
@@ -70,7 +65,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         })
 
         addIllnessViewModel.onComplete().observe(this, androidx.lifecycle.Observer {
-            showInfoToast(getString(R.string.data_saved))
+            showSuccessToast(getString(R.string.data_saved))
             finish()
         })
 
@@ -90,6 +85,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun setupCameraConfigs(){
+        cameraRequestHandler = CameraRequestHandler(this)
         CroperinoConfig(PHOTO_NAME, Constants.DIRECTORY, Constants.RAW_DIRECTORY)
         CroperinoFileUtil.setupDirectory(this)
     }
@@ -140,14 +136,14 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        uriTreatmentPhoto = CameraRequestHandler.handleOnActivityResult(requestCode,resultCode,data,this)
+        uriTreatmentPhoto = cameraRequestHandler.handleOnActivityResult(requestCode,resultCode,data)
         imgViewTreatmentPhoto.setImageURI(uriTreatmentPhoto)
         imgViewTreatmentPhoto.visibility = View.VISIBLE
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        CameraRequestHandler.handleRequestPermissionResult(requestCode,grantResults,this)
+        cameraRequestHandler.handleRequestPermissionResult(requestCode,grantResults)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

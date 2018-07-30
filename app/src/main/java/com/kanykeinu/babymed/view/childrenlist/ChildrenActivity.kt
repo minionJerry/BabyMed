@@ -102,6 +102,7 @@ class ChildrenActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.settings -> showInfoToast("Settings is clicked")
+            android.R.id.home -> BottomNavigationDialogFragment.newInstance().show(supportFragmentManager, "dialog")
         }
         return super.onOptionsItemSelected(item)
     }
