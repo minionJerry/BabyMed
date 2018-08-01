@@ -5,6 +5,7 @@ import com.kanykeinu.babymed.view.addeditillness.NewIllnessActivity
 import com.kanykeinu.babymed.view.childdetail.ChildDetailActivity
 import com.kanykeinu.babymed.view.childrenlist.ChildrenActivity
 import com.kanykeinu.babymed.view.illnessdetail.IllnessDetailActivity
+import com.kanykeinu.babymed.view.singup.RegisterUserActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -25,6 +26,9 @@ abstract class BuildersModule {
 
     @ContributesAndroidInjector
     abstract fun contributeIllnessDetailActivity() : IllnessDetailActivity
+
+    @ContributesAndroidInjector
+    abstract fun contributeRegisterUserActivity() : RegisterUserActivity
 
 
 }

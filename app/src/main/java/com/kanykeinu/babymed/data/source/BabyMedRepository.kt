@@ -4,11 +4,13 @@ import com.kanykeinu.babymed.data.source.local.dao.ChildDao
 import com.kanykeinu.babymed.data.source.local.dao.IllnessDao
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
+import com.kanykeinu.babymed.data.source.remote.firebase.FirebaseHandler
+import com.kanykeinu.babymed.data.source.remote.firebase.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illnessDao : IllnessDao) {
+class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illnessDao : IllnessDao,val firebaseHandler: FirebaseHandler) {
 
     fun getChildrenFromDb() : Observable<List<Child>> {
         return childDao.getAll()
@@ -50,6 +52,26 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
 
     fun getIllnessbyId(id: Long) : Observable<Illness>{
         return illnessDao.getById(id).toObservable()
+    }
+
+    fun saveUserToFirebase(user: User): String? {
+        return firebaseHandler.saveUserToFirebase(user)
+    }
+
+    fun checkUserFromFirebase(user: User) {
+        firebaseHandler.checkUserFromFirebase(user)
+    }
+
+    fun saveChildToFirebase(userId : String, child: com.kanykeinu.babymed.data.source.remote.firebase.Child){
+        firebaseHandler.saveChildToFirebase(userId,child)
+    }
+
+    fun updateChildToFirebase(userId: String,childId: String,child: com.kanykeinu.babymed.data.source.remote.firebase.Child){
+        firebaseHandler.updateChildFromFirebase(userId, childId, child)
+    }
+
+    fun deleteChildFromFirebase(userId: String, childId: String){
+        firebaseHandler.deleteChildFromFirebase(userId,childId)
     }
 
 }

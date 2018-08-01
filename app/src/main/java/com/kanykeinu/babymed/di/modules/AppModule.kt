@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.kanykeinu.babymed.data.source.local.BabyMedDatabase
 import com.kanykeinu.babymed.data.source.local.dao.ChildDao
 import com.kanykeinu.babymed.data.source.local.dao.IllnessDao
+import com.kanykeinu.babymed.data.source.local.sharedpref.SharedPreferencesManager
+import com.kanykeinu.babymed.data.source.remote.firebase.FirebaseHandler
 import com.kanykeinu.babymed.utils.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -34,4 +36,12 @@ class AppModule(val app : Application) {
     @Singleton
     fun provideIllnessDao(
             database: BabyMedDatabase): IllnessDao = database.illnessDao()
+
+    @Provides
+    @Singleton
+    fun provideSharedPrefs() : SharedPreferencesManager = SharedPreferencesManager(app)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseHandler() : FirebaseHandler = FirebaseHandler()
 }
