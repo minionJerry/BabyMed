@@ -1,15 +1,24 @@
 package com.kanykeinu.babymed.data.source.remote.firebase
 
-import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
+import android.app.Application
+import android.content.Context
+import android.util.Log
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import java.util.*
 
-class FirebaseHandler {
+class FirebaseHandler constructor(){
     var database = FirebaseDatabase.getInstance()
     var databaseRef = database.getReference().child("users")
+    var mAuth = FirebaseAuth.getInstance()
     private var userListener: ValueEventListener? = null
     private var checkedUser : User? = null
 
@@ -44,7 +53,7 @@ class FirebaseHandler {
         return false
     }
 
-    fun saveChildToFirebase(userId : String,child: Child) : String? {
+    fun saveChildToFirebase(userId: String, child: com.kanykeinu.babymed.data.source.local.entity.Child) : String? {
         val childId = databaseRef.child(userId).child("childList").push().key
         if (childId != null) {
             databaseRef.child(userId).child("childList").child(childId).setValue(child)
@@ -76,6 +85,20 @@ class FirebaseHandler {
         databaseRef.child(userId).child("childList").child(childId).child("illnessList").child(illnessId).removeValue()
     }
 
+    fun createAccount(email : String, password : String) : Observable<Task<AuthResult>> {
+        Log.e("Account"," Email & Password --> " + email + " : " + password)
+        return io.reactivex.Observable.fromCallable { mAuth.createUserWithEmailAndPassword(email,password)}
+    }
 
+    fun getCurrentUser() : FirebaseUser?{
+        return mAuth.currentUser
+    }
 
+    fun signIn(email: String,password: String)  : Observable<Task<AuthResult>>? {
+        return Observable.fromCallable { mAuth.signInWithEmailAndPassword(email, password)}
+    }
+
+    fun signOut() {
+        mAuth.signOut()
+    }
 }

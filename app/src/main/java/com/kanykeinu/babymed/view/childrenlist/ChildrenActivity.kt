@@ -10,12 +10,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kanykeinu.babymed.R
+import com.kanykeinu.babymed.R.id.bottomAppBar
+import com.kanykeinu.babymed.R.id.progressBar
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.utils.Constants
 import com.kanykeinu.babymed.utils.showErrorToast
 import com.kanykeinu.babymed.utils.showInfoToast
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
 import com.kanykeinu.babymed.view.childdetail.ChildDetailActivity
+import com.kanykeinu.babymed.view.singup.UserViewModel
+import com.kanykeinu.babymed.view.singup.UserViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.recyclerChildren
@@ -26,6 +30,9 @@ class ChildrenActivity : AppCompatActivity() {
     @Inject
     lateinit var childrenViewModelFactory: ChildrenViewModelFactory
     lateinit var childrenViewModel: ChildrenViewModel
+    @Inject
+    lateinit var userViewModelFactory : UserViewModelFactory
+    lateinit var userViewModel : UserViewModel
     private val childAdapter = ChildrenAdapter(this,ArrayList(),object : OnChildItemClick{
         override fun onChildClick(child: Child) {
             startActivity(Intent(applicationContext, ChildDetailActivity::class.java).putExtra(Constants.CHILD,child))
@@ -47,6 +54,7 @@ class ChildrenActivity : AppCompatActivity() {
     private fun injectChildrenViewModel(){
         AndroidInjection.inject(this)
         childrenViewModel = ViewModelProviders.of(this,childrenViewModelFactory).get(ChildrenViewModel::class.java)
+        userViewModel = ViewModelProviders.of(this, userViewModelFactory).get(UserViewModel::class.java)
 
         childrenViewModel.onSuccess()
                 .observe(this, Observer<List<Child>> { children->
@@ -102,7 +110,7 @@ class ChildrenActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
             R.id.settings -> showInfoToast("Settings is clicked")
-            android.R.id.home -> BottomNavigationDialogFragment.newInstance().show(supportFragmentManager, "dialog")
+            android.R.id.home -> BottomNavigationDialogFragment.newInstance(userViewModel.getCurrentUser()?.displayName).show(supportFragmentManager, "dialog")
         }
         return super.onOptionsItemSelected(item)
     }

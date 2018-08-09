@@ -10,10 +10,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
+import com.kanykeinu.babymed.BabyMedApplication_MembersInjector
 import com.kanykeinu.babymed.R
+import com.kanykeinu.babymed.data.source.BabyMedRepository
 import com.kanykeinu.babymed.utils.Constants.DIRECTORY
 import com.kanykeinu.babymed.utils.Constants.RAW_DIRECTORY
 import com.kanykeinu.babymed.data.source.local.entity.Child
+import com.kanykeinu.babymed.data.source.local.sharedpref.SharedPreferencesManager
 import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.CHILD
 import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
@@ -32,6 +35,8 @@ import javax.inject.Inject
 
 class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocusChangeListener, DatePickerDialog.OnDateSetListener {
 
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
     @Inject
     lateinit var addEditChildViewModelFactory: AddEditChildViewModelFactory
     lateinit var addEditChildViewModel: AddEditChildViewModel

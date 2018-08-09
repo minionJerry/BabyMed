@@ -2,8 +2,8 @@ package com.kanykeinu.babymed.view.childrenlist
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,17 +12,35 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.get
 import androidx.core.widget.toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.internal.NavigationMenuView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.kanykeinu.babymed.R
+import com.kanykeinu.babymed.R.id.*
+import com.kanykeinu.babymed.data.source.local.sharedpref.SharedPreferencesManager
 import com.kanykeinu.babymed.utils.showInfoToast
 import com.kanykeinu.babymed.utils.showSuccessToast
+import com.kanykeinu.babymed.view.singup.SignInActivity
+import com.kanykeinu.babymed.view.singup.UserViewModel
+import com.kanykeinu.babymed.view.singup.UserViewModelFactory
+import com.kanykeinu.babymed.view.singup.UserViewModelFactory_Factory
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
 import kotlinx.android.synthetic.main.fragment_item_list_dialog.*
+import javax.inject.Inject
 
-// TODO: Customize parameter argument names
 class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
+
+//    lateinit var userViewModel : UserViewModel
+//    @Inject
+//    lateinit var userViewModelFactory : UserViewModelFactory
+//    @Inject
+//    lateinit var prefs : SharedPreferencesManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -31,17 +49,31 @@ class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        tvUsernameDialog.text = FirebaseAuth.getInstance().currentUser?.displayName
+        tvUserEmail.text = FirebaseAuth.getInstance().currentUser?.email
 
-        navigation_view.setNavigationItemSelectedListener {
+        navigationView.setNavigationItemSelectedListener {
             menuItem ->
             // Bottom Navigation Drawer menu item clicks
             when (menuItem.itemId) {
-                R.id.myChildren -> { this.dismiss()}
-                R.id.sendFeedback -> context?.showInfoToast("my children")
-                R.id.exit -> context?.showInfoToast("my children")
+                myChildren -> { this.dismiss()}
+                sendFeedback -> context?.showInfoToast("my children")
+                exit -> {
+//                    userViewModel.signOut()
+//                    prefs.saveUserId(null)
+                    goToSignInScreen()
+                }
             }
             true
         }
+    }
+
+    private fun injectUserViewModel(){
+//        userViewModel = ViewModelProviders.of(this, userViewModelFactory).get(UserViewModel::class.java)
+    }
+
+    private fun goToSignInScreen(){
+        startActivity(Intent(context,SignInActivity::class.java))
     }
 
     private fun disableNavigationViewScrollbars(navigation_view: NavigationView?) {
@@ -60,10 +92,15 @@ class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
+        private val USERNAME = "USERNAME"
 
-        // TODO: Customize parameters
-        fun newInstance(): BottomNavigationDialogFragment =
-                BottomNavigationDialogFragment()
+        fun newInstance(username : String?): BottomNavigationDialogFragment {
+            val args: Bundle = Bundle()
+            args.putSerializable(USERNAME, username)
+            val fragment = BottomNavigationDialogFragment()
+            fragment.arguments = args
+            return fragment
+        }
 
     }
 }

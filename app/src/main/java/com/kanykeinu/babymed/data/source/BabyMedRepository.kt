@@ -1,12 +1,14 @@
 package com.kanykeinu.babymed.data.source
 
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseUser
 import com.kanykeinu.babymed.data.source.local.dao.ChildDao
 import com.kanykeinu.babymed.data.source.local.dao.IllnessDao
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.data.source.remote.firebase.FirebaseHandler
 import com.kanykeinu.babymed.data.source.remote.firebase.User
-import io.reactivex.Completable
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -62,7 +64,7 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
         firebaseHandler.checkUserFromFirebase(user)
     }
 
-    fun saveChildToFirebase(userId : String, child: com.kanykeinu.babymed.data.source.remote.firebase.Child){
+    fun saveChildToFirebase(userId: String, child: Child){
         firebaseHandler.saveChildToFirebase(userId,child)
     }
 
@@ -72,6 +74,22 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
 
     fun deleteChildFromFirebase(userId: String, childId: String){
         firebaseHandler.deleteChildFromFirebase(userId,childId)
+    }
+
+    fun createUserAccount(email: String, password : String) : Observable<Task<AuthResult>>{
+       return firebaseHandler.createAccount(email,password)
+    }
+
+    fun signInUser(email: String,password: String) : Observable<Task<AuthResult>>? {
+        return firebaseHandler.signIn(email,password)
+    }
+
+    fun signOut(){
+        firebaseHandler.signOut()
+    }
+
+    fun getCurrentUser() : FirebaseUser? {
+        return firebaseHandler.getCurrentUser()
     }
 
 }

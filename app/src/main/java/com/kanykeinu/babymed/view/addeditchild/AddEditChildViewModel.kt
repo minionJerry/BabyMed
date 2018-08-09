@@ -1,15 +1,11 @@
 package com.kanykeinu.babymed.view.addeditchild
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kanykeinu.babymed.data.source.BabyMedRepository
 import com.kanykeinu.babymed.data.source.local.entity.Child
-import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -64,6 +60,10 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(disposableUpdateChildObserver)
 
+    }
+
+    fun saveChildToFirebase(userId: String, child: Child){
+        babyMedRepository.saveChildToFirebase(userId, child)
     }
 
     fun onComplete() : LiveData<Boolean> {

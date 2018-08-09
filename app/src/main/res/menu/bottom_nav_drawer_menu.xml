@@ -3,7 +3,8 @@
     <group android:checkableBehavior="none">
         <item
             android:id="@+id/myChildren"
-            android:title="@string/my_children" />
+            android:title="@string/my_children"
+            android:icon="@drawable/ic_child_care_dark"/>
     </group>
     <group android:checkableBehavior="none">
         <item
