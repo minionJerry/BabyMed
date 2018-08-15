@@ -9,15 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.R.id.bottomAppBar
 import com.kanykeinu.babymed.R.id.progressBar
 import com.kanykeinu.babymed.data.source.local.entity.Child
+import com.kanykeinu.babymed.data.source.local.sharedpref.SharedPreferencesManager
+import com.kanykeinu.babymed.data.source.remote.firebase.FirebaseHandler
 import com.kanykeinu.babymed.utils.Constants
 import com.kanykeinu.babymed.utils.showErrorToast
 import com.kanykeinu.babymed.utils.showInfoToast
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
 import com.kanykeinu.babymed.view.childdetail.ChildDetailActivity
+import com.kanykeinu.babymed.view.singup.SignInActivity
 import com.kanykeinu.babymed.view.singup.UserViewModel
 import com.kanykeinu.babymed.view.singup.UserViewModelFactory
 import dagger.android.AndroidInjection
@@ -33,6 +37,10 @@ class ChildrenActivity : AppCompatActivity() {
     @Inject
     lateinit var userViewModelFactory : UserViewModelFactory
     lateinit var userViewModel : UserViewModel
+    @Inject
+    lateinit var prefs : SharedPreferencesManager
+    @Inject
+    lateinit var firebaseHandler: FirebaseHandler
     private val childAdapter = ChildrenAdapter(this,ArrayList(),object : OnChildItemClick{
         override fun onChildClick(child: Child) {
             startActivity(Intent(applicationContext, ChildDetailActivity::class.java).putExtra(Constants.CHILD,child))
@@ -42,6 +50,7 @@ class ChildrenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectChildrenViewModel()
+        checkIfUserAuthorized()
         setContentView(R.layout.activity_main)
         setSupportActionBar(bottomAppBar)
         progressBar.visibility = View.VISIBLE
@@ -49,7 +58,6 @@ class ChildrenActivity : AppCompatActivity() {
         openAddChildScreen()
         loadData()
     }
-
 
     private fun injectChildrenViewModel(){
         AndroidInjection.inject(this)
@@ -73,6 +81,17 @@ class ChildrenActivity : AppCompatActivity() {
                     if (isLoading == false)
                         progressBar.visibility = View.GONE
                 })
+    }
+
+    private fun checkIfUserAuthorized(){
+        val user = firebaseHandler.getCurrentUser()
+        if (user != null)
+            prefs.saveUserId(user.uid)
+        else goToSignInScreen()
+    }
+
+    private fun goToSignInScreen(){
+        startActivity(Intent(this,SignInActivity::class.java))
     }
 
     private fun loadData() {
@@ -114,4 +133,5 @@ class ChildrenActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

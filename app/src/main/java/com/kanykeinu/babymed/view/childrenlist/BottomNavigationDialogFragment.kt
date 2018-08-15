@@ -36,12 +36,6 @@ import javax.inject.Inject
 
 class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
 
-//    lateinit var userViewModel : UserViewModel
-//    @Inject
-//    lateinit var userViewModelFactory : UserViewModelFactory
-//    @Inject
-//    lateinit var prefs : SharedPreferencesManager
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_item_list_dialog, container, false)
@@ -59,8 +53,6 @@ class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
                 myChildren -> { this.dismiss()}
                 sendFeedback -> context?.showInfoToast("my children")
                 exit -> {
-//                    userViewModel.signOut()
-//                    prefs.saveUserId(null)
                     goToSignInScreen()
                 }
             }
@@ -68,9 +60,6 @@ class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun injectUserViewModel(){
-//        userViewModel = ViewModelProviders.of(this, userViewModelFactory).get(UserViewModel::class.java)
-    }
 
     private fun goToSignInScreen(){
         startActivity(Intent(context,SignInActivity::class.java))

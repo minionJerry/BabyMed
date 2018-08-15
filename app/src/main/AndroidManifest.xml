@@ -19,7 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.childrenlist.ChildrenActivity" />
+        <activity android:name=".view.childrenlist.ChildrenActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".view.addeditchild.NewChildActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
@@ -38,11 +44,7 @@
         </activity>
         <activity android:name=".view.singup.SignInActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

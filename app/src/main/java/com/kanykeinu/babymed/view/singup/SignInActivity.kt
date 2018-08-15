@@ -7,12 +7,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.auth.FirebaseAuth
 import com.kanykeinu.babymed.R
-import com.kanykeinu.babymed.R.id.eTextLogin
-import com.kanykeinu.babymed.R.id.eTextPassword
+import com.kanykeinu.babymed.R.id.*
 import com.kanykeinu.babymed.data.source.local.sharedpref.SharedPreferencesManager
 import com.kanykeinu.babymed.data.source.remote.firebase.FirebaseHandler
 import com.kanykeinu.babymed.data.source.remote.firebase.User
 import com.kanykeinu.babymed.utils.showErrorToast
+import com.kanykeinu.babymed.utils.showSuccessToast
 import com.kanykeinu.babymed.view.childrenlist.ChildrenActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_sign_in.*
@@ -24,7 +24,6 @@ class SignInActivity : BaseAuthActivity() {
     lateinit var userViewModel: UserViewModel
     @Inject
     lateinit var prefs : SharedPreferencesManager
-    lateinit var authListener : FirebaseAuth.AuthStateListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,39 +37,6 @@ class SignInActivity : BaseAuthActivity() {
         setContentView(R.layout.activity_sign_in)
         btnRegister.setOnClickListener { goToRegistrationScreen() }
         btnAuth.setOnClickListener{ singInUser() }
-
-        authListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            val user = firebaseAuth.currentUser
-            if (user!= null){
-                // user is signed in, go to the next page
-                prefs.saveUserId(user.uid)
-                goToChildrenList()
-            }
-        }
-    }
-
-    private fun registerObservers() {
-        userViewModel.initSignInObserver()
-
-        userViewModel.onSignUpSuccess().observe(this, Observer { isSuccessfull ->
-            if (isSuccessfull) {
-                prefs.saveUserId(FirebaseAuth.getInstance().currentUser!!.uid)
-                goToChildrenList()
-            }
-        })
-
-        userViewModel.onSignUpError().removeObservers(this)
-        userViewModel.onSignUpError().observe(this, Observer { error ->
-
-            if (error!=null) {
-                showErrorToast(error)
-                userViewModel.onSignUpError().postValue(null)
-            }
-                            })
-    }
-
-    private fun goToChildrenList(){
-        startActivity(Intent(this, ChildrenActivity::class.java))
     }
 
     private fun goToRegistrationScreen(){
@@ -84,15 +50,28 @@ class SignInActivity : BaseAuthActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        FirebaseHandler().mAuth.addAuthStateListener(authListener)
+    private fun registerObservers() {
+        userViewModel.initSignInObserver()
+
+        userViewModel.onSignInSuccess().observe(this, Observer { isSuccessfull ->
+            if (isSuccessfull) {
+                prefs.saveUserId(FirebaseAuth.getInstance().currentUser!!.uid)
+                showSuccessToast("Привет. Добро пожаловать в BabyMed!")
+                goToChildrenList()
+            }
+
+        })
+
+        userViewModel.onSignInError().observe(this, Observer { error ->
+            if (error!=null) {
+                showErrorToast(error)
+                userViewModel.onSignInError().postValue(null)
+            }
+        })
     }
 
-    override fun onPause() {
-        if (authListener!=null)
-            FirebaseHandler().mAuth.removeAuthStateListener(authListener)
-        super.onPause()
+    private fun goToChildrenList(){
+        startActivity(Intent(this, ChildrenActivity::class.java))
     }
 
     override fun onDestroy() {

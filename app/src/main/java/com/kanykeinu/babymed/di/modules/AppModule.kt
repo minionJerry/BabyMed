@@ -43,5 +43,5 @@ class AppModule(val app : Application) {
 
     @Provides
     @Singleton
-    fun provideFirebaseHandler() : FirebaseHandler = FirebaseHandler( )
+    fun provideFirebaseHandler() : FirebaseHandler = FirebaseHandler()
 }

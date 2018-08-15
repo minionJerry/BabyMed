@@ -76,7 +76,7 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
         firebaseHandler.deleteChildFromFirebase(userId,childId)
     }
 
-    fun createUserAccount(email: String, password : String) : Observable<Task<AuthResult>>{
+    fun createUserAccount(email: String, password : String) : Observable<Task<AuthResult>>?{
        return firebaseHandler.createAccount(email,password)
     }
 

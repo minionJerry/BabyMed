@@ -16,9 +16,9 @@ import io.reactivex.Observable
 import java.util.*
 
 class FirebaseHandler constructor(){
-    var database = FirebaseDatabase.getInstance()
-    var databaseRef = database.getReference().child("users")
-    var mAuth = FirebaseAuth.getInstance()
+    private var database = FirebaseDatabase.getInstance()
+    private var databaseRef = database.getReference().child("users")
+    private var mAuth = FirebaseAuth.getInstance()
     private var userListener: ValueEventListener? = null
     private var checkedUser : User? = null
 
@@ -85,7 +85,7 @@ class FirebaseHandler constructor(){
         databaseRef.child(userId).child("childList").child(childId).child("illnessList").child(illnessId).removeValue()
     }
 
-    fun createAccount(email : String, password : String) : Observable<Task<AuthResult>> {
+    fun createAccount(email : String, password : String) : Observable<Task<AuthResult>>? {
         Log.e("Account"," Email & Password --> " + email + " : " + password)
         return io.reactivex.Observable.fromCallable { mAuth.createUserWithEmailAndPassword(email,password)}
     }
@@ -95,10 +95,12 @@ class FirebaseHandler constructor(){
     }
 
     fun signIn(email: String,password: String)  : Observable<Task<AuthResult>>? {
-        return Observable.fromCallable { mAuth.signInWithEmailAndPassword(email, password)}
+        return io.reactivex.Observable.fromCallable { mAuth.signInWithEmailAndPassword(email, password)}
     }
 
     fun signOut() {
         mAuth.signOut()
     }
+
+
 }

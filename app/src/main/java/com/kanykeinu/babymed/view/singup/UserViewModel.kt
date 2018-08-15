@@ -19,7 +19,9 @@ class UserViewModel @Inject constructor(private val babyMedRepository: BabyMedRe
     lateinit var disposableObserverForSignUp: DisposableObserver<Task<AuthResult>>
     lateinit var disposableObserverForSignIn: DisposableObserver<Task<AuthResult>>
     private var signUpError: MutableLiveData<String> = MutableLiveData()
+    private var signInError: MutableLiveData<String> = MutableLiveData()
     private var signUpComplete : MutableLiveData<Boolean> = MutableLiveData()
+    private var signInComplete : MutableLiveData<Boolean> = MutableLiveData()
 
     fun initSignUpObserver(){
         disposableObserverForSignUp = object : DisposableObserver<Task<AuthResult>>(){
@@ -44,20 +46,19 @@ class UserViewModel @Inject constructor(private val babyMedRepository: BabyMedRe
             }
 
             override fun onNext(t: Task<AuthResult>) {
-                signUpComplete.postValue(t.isSuccessful)
-                t.addOnFailureListener { signUpError.postValue(t.exception?.localizedMessage) }
+                signInComplete.postValue(t.isSuccessful)
+                t.addOnFailureListener { signInError.postValue(t.exception?.localizedMessage) }
             }
 
             override fun onError(e: Throwable) {
-                signUpError.value = e.localizedMessage
-//                signUpError.postValue(e.localizedMessage)
+                signInError.postValue(e.localizedMessage)
             }
         }
     }
 
     fun signUp(email : String, password : String){
       babyMedRepository.createUserAccount(email,password)
-              .subscribeOn(Schedulers.newThread())
+              ?.subscribeOn(Schedulers.newThread())
               ?.observeOn(AndroidSchedulers.mainThread())
               ?.subscribe(disposableObserverForSignUp)
     }
@@ -74,8 +75,16 @@ class UserViewModel @Inject constructor(private val babyMedRepository: BabyMedRe
         return signUpComplete
     }
 
+    fun onSignInSuccess() : MutableLiveData<Boolean>{
+        return signInComplete
+    }
+
     fun onSignUpError() : MutableLiveData<String>{
         return signUpError
+    }
+
+    fun onSignInError() : MutableLiveData<String>{
+        return signInError
     }
 
     fun getCurrentUser() : FirebaseUser? {

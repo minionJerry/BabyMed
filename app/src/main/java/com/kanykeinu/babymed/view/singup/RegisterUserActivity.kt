@@ -12,12 +12,13 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.R.id.*
 import com.kanykeinu.babymed.utils.showErrorToast
+import com.kanykeinu.babymed.utils.showSuccessToast
 import com.kanykeinu.babymed.view.childrenlist.ChildrenActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_register_user.*
 import javax.inject.Inject
 
-class RegisterUserActivity : BaseAuthActivity(), View.OnFocusChangeListener, View.OnClickListener {
+class RegisterUserActivity : BaseAuthActivity(), View.OnFocusChangeListener {
 
 
     @Inject
@@ -26,32 +27,40 @@ class RegisterUserActivity : BaseAuthActivity(), View.OnFocusChangeListener, Vie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // inject userViewModel
+        AndroidInjection.inject(this)
+        userViewModel = ViewModelProviders.of(this, userViewModelFactory).get(UserViewModel::class.java)
 
         setContentView(R.layout.activity_register_user)
         eTextLogin.setOnFocusChangeListener(this)
         eTextPassword.setOnFocusChangeListener(this)
         eTextConfirmPassword.setOnFocusChangeListener(this)
-        btnRegister.setOnClickListener(this)
+        btnRegister.setOnClickListener {
+            injectRegisterViewModel()
+            signUpUser()
+        }
     }
 
     private fun injectRegisterViewModel() {
-        AndroidInjection.inject(this)
-        userViewModel = ViewModelProviders.of(this, userViewModelFactory).get(UserViewModel::class.java)
-
         userViewModel.initSignUpObserver()
 
         userViewModel.onSignUpSuccess().observe(this, Observer { isSuccessfull ->
             if (isSuccessfull) {
                 updateUserProfile()
                 goToSignInScreen()
-            } })
+            }
+        })
 
         userViewModel.onSignUpError().observe(this, Observer { error ->
-            if (error!=null) showErrorToast(error) })
+            if (error!=null) {
+                showErrorToast(error)
+                userViewModel.onSignUpError().postValue(null)
+            } })
     }
 
     private fun updateUserProfile(){
         userViewModel.getCurrentUser()?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(eTextUsername.text.toString()).build())
+                ?.addOnCompleteListener { task ->  if (task.isSuccessful) showSuccessToast("Profile is updated")}
     }
 
     private fun goToSignInScreen(){
@@ -78,12 +87,11 @@ class RegisterUserActivity : BaseAuthActivity(), View.OnFocusChangeListener, Vie
         return false
     }
 
-    override fun onClick(p0: View?) {
-        injectRegisterViewModel()
-        if (!isLoginFieldEmpty() && isPasswordNotEmptyAndValidated() && !isConfirmPasswordEmpty()){
-            userViewModel.signUp(eTextLogin.text.toString(),eTextPassword.text.toString())
-        }
-    }
+   private fun signUpUser() {
+       if (!isLoginFieldEmpty() && isPasswordNotEmptyAndValidated() && !isConfirmPasswordEmpty()) {
+           userViewModel.signUp(eTextLogin.text.toString(), eTextPassword.text.toString())
+       }
+   }
 
     override fun onDestroy() {
         userViewModel.disposeSignUpObserver()
