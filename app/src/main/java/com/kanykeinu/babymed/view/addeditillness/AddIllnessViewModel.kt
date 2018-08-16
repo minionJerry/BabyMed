@@ -15,12 +15,18 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     lateinit var disposableObserver : DisposableObserver<Unit>
     lateinit var disposableUpdatingObserver : DisposableObserver<Unit>
     lateinit var illnessListObserver: DisposableObserver<List<Illness>>
+    lateinit var getIllnessObserver: DisposableObserver<Illness>
+    lateinit var removingIllnessObserver: DisposableObserver<Unit>
 
     private var addIllnessError: MutableLiveData<String> = MutableLiveData()
     private var addIllnessComplete : MutableLiveData<Boolean> = MutableLiveData()
     private var illnessUpdatingComplete : MutableLiveData<Boolean> = MutableLiveData()
     private var illnessListResult : MutableLiveData<List<Illness>> = MutableLiveData()
     private var illnessListError : MutableLiveData<String> = MutableLiveData()
+    private val illnessRemovingResult: MutableLiveData<Boolean> = MutableLiveData()
+    private val illnessRemovingError : MutableLiveData<String> = MutableLiveData()
+    private val getIllnessResult : MutableLiveData<Illness> = MutableLiveData()
+    private val getIllnessError : MutableLiveData<String> = MutableLiveData()
 
     fun initDisposableObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
@@ -66,6 +72,36 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         }
     }
 
+    fun initRemovingIllnessObserver(){
+        removingIllnessObserver = object : DisposableObserver<Unit>() {
+            override fun onNext(t: Unit) {
+            }
+
+            override fun onComplete() {
+                illnessRemovingResult.postValue(true)
+            }
+
+            override fun onError(e: Throwable) {
+                illnessRemovingError.postValue(e.message)
+            }
+        }
+    }
+
+    fun initGettingIllnessObserver(){
+        getIllnessObserver = object : DisposableObserver<Illness>(){
+            override fun onComplete() {
+            }
+
+            override fun onNext(t: Illness) {
+                getIllnessResult.postValue(t)
+            }
+
+            override fun onError(e: Throwable) {
+                getIllnessError.postValue(e.message)
+            }
+        }
+    }
+
     fun saveIllness(illness : Illness)  {
         babyMedRepository.insertIllnessToBd(illness)
                 ?.subscribeOn(Schedulers.io())
@@ -95,6 +131,24 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
                 .subscribe(illnessListObserver)
     }
 
+    fun removeIllness(illness: Illness){
+        babyMedRepository.deleteIllness(illness)
+                .subscribeOn(Schedulers.newThread())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe(removingIllnessObserver)
+    }
+
+    fun removeIllnessFromFirebase(childId: String, illnessId : String){
+        babyMedRepository.removeIllnessFromFirebase(childId,illnessId)
+    }
+
+    fun getIllness(id : Long){
+        babyMedRepository.getIllnessbyId(id)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getIllnessObserver)
+    }
+
     fun onComplete() : LiveData<Boolean> {
         return addIllnessComplete
     }
@@ -115,6 +169,22 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         return illnessListError
     }
 
+    fun onRemoveIllnessResult() : LiveData<Boolean>{
+        return illnessRemovingResult
+    }
+
+    fun onRemoveIllnessError() : LiveData<String>{
+        return illnessRemovingError
+    }
+
+    fun onGetIllnessByIdComplete() : LiveData<Illness>{
+        return getIllnessResult
+    }
+
+    fun onGetIllnessError() : LiveData<String>{
+        return getIllnessError
+    }
+
     fun disposeObserver(){
         if (!disposableObserver.isDisposed)
             disposableObserver.dispose()
@@ -124,7 +194,19 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     }
 
     fun disposeIllnessListObserver(){
-        if (illnessListObserver.isDisposed)
+        if (!illnessListObserver.isDisposed)
             illnessListObserver.dispose()
     }
+
+    fun disposeGetIllnessObserver(){
+        if (!getIllnessObserver.isDisposed)
+            getIllnessObserver.dispose()
+    }
+
+    fun disposeRemovingIllnessObserver(){
+        if (!removingIllnessObserver.isDisposed)
+            removingIllnessObserver.dispose()
+    }
+
+
 }

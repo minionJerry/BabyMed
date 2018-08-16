@@ -16,6 +16,8 @@ import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.CHILD
 import com.kanykeinu.babymed.utils.Constants.ILLNESS
+import com.kanykeinu.babymed.view.addeditillness.AddIllnessViewModel
+import com.kanykeinu.babymed.view.addeditillness.AddIllnessViewModelFactory
 import com.kanykeinu.babymed.view.addeditillness.NewIllnessActivity
 import com.kanykeinu.babymed.view.childrenlist.ChildrenViewModel
 import com.kanykeinu.babymed.view.childrenlist.ChildrenViewModelFactory
@@ -28,8 +30,8 @@ import javax.inject.Inject
 class IllnessDetailActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var illnessDetailViewModelFactory: IllnessDetailViewModelFactory
-    lateinit var illnessDetailViewModel: IllnessDetailViewModel
+    lateinit var addIllnessViewModelFactory: AddIllnessViewModelFactory
+    lateinit var addIllnessViewModel: AddIllnessViewModel
     lateinit var illness: Illness
     lateinit var child: Child
     val MALE_GENDER = "мальчик"
@@ -40,29 +42,22 @@ class IllnessDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_illness_detail)
         initActionBar()
         illness = intent.getParcelableExtra<Illness>(ILLNESS)
-        illnessDetailViewModel.getIllnessById(illness.id)
+        addIllnessViewModel.getIllness(illness.id)
         child = intent.getParcelableExtra(CHILD)
         initFields(illness)
     }
 
     private fun injectChildrenViewModel() {
         AndroidInjection.inject(this)
-        illnessDetailViewModel = ViewModelProviders.of(this, illnessDetailViewModelFactory).get(IllnessDetailViewModel::class.java)
-        illnessDetailViewModel.initDisposableObserver()
+        addIllnessViewModel = ViewModelProviders.of(this, addIllnessViewModelFactory).get(AddIllnessViewModel::class.java)
+        addIllnessViewModel.initGettingIllnessObserver()
+        addIllnessViewModel.initRemovingIllnessObserver()
 
-        illnessDetailViewModel.onSuccessDeleting()
-                .observe(this, Observer { isDeleted ->
-                    showInfoToast(getString(R.string.illness_is_deleted))
-                })
+        addIllnessViewModel.onGetIllnessByIdComplete().observe(this, Observer { illness -> initFields(illness)  })
+        addIllnessViewModel.onGetIllnessError().observe(this, Observer { error -> showErrorToast(error) })
 
-        illnessDetailViewModel.onError()
-                .observe(this, Observer { error ->
-                    if (error != null)
-                        showErrorToast(error)
-                })
-
-        illnessDetailViewModel.onCompleteGettingIllness()
-                .observe(this, Observer { illness -> initFields(illness) })
+        addIllnessViewModel.onRemoveIllnessResult().observe(this, Observer { isSuccessfult -> if (isSuccessfult) showInfoToast(getString(R.string.illness_is_deleted))})
+        addIllnessViewModel.onRemoveIllnessError().observe(this, Observer { error -> showErrorToast(error)})
     }
 
     private fun initActionBar(){
@@ -108,7 +103,8 @@ class IllnessDetailActivity : AppCompatActivity() {
     }
 
     private fun deleteIllness() {
-        illnessDetailViewModel.deleteIllness(illness)
+        addIllnessViewModel.removeIllness(illness)
+        addIllnessViewModel.removeIllnessFromFirebase(child.firebaseId!!, illness.firebaseId!!)
     }
 
     private fun openEditIllnessDataScreen() {
@@ -116,7 +112,8 @@ class IllnessDetailActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        illnessDetailViewModel.disposeObservers()
+        addIllnessViewModel.disposeGetIllnessObserver()
+        addIllnessViewModel.disposeRemovingIllnessObserver()
         super.onDestroy()
     }
 }

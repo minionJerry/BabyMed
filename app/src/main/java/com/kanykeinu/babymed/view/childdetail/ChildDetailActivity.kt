@@ -134,6 +134,7 @@ class ChildDetailActivity : AppCompatActivity() {
 
     private fun deleteChild(){
         addEditChildViewModel.deleteChildData(child!!)
+        addEditChildViewModel.removeChildFromFirebase(child!!.firebaseId!!)
     }
 
     private fun openEditChildDataScreen(){
@@ -143,6 +144,7 @@ class ChildDetailActivity : AppCompatActivity() {
     override fun onDestroy() {
         addEditChildViewModel.disposeChildDisplayingObserver()
         addEditChildViewModel.disposeChildRemovingObserver()
+        addIllnessViewModel.disposeIllnessListObserver()
         super.onDestroy()
     }
 }
