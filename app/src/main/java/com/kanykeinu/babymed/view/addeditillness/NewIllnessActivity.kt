@@ -122,15 +122,22 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private fun updateExistingIllness(){
         val illnessId = illness!!.id
-        val illness = Illness(illnessId, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
+        val newIllness = Illness(illnessId, illness!!.firebaseId,  editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
                       uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
-        addIllnessViewModel.updateIllness(illness)
+        addIllnessViewModel.updateIllness(newIllness)
+        val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(newIllness.name,newIllness.symptoms,newIllness.treatment,newIllness.treatmentPhotoUri,
+                newIllness.date,newIllness.illnessWeight)
+        addIllnessViewModel.updateIllnessFromFirebase(child!!.firebaseId!!, illness!!.firebaseId!!, firebaseIllness)
     }
 
 
     private fun saveNewIllness(){
-        val illness = Illness(0, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
+        val illness = Illness(0,null, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
                       uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
+        val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(illness.name,illness.symptoms,illness.treatment,illness.treatmentPhotoUri,
+                                        illness.date,illness.illnessWeight)
+        val firebaseId : String? = addIllnessViewModel.saveIllnessToFirebase(child!!.firebaseId!!,firebaseIllness)
+        illness.firebaseId = firebaseId
         addIllnessViewModel.saveIllness(illness)
     }
 

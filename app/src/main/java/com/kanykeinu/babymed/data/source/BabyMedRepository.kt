@@ -56,24 +56,28 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
         return illnessDao.getById(id).toObservable()
     }
 
-    fun saveUserToFirebase(user: User): String? {
-        return firebaseHandler.saveUserToFirebase(user)
+    fun saveChildToFirebase(child: com.kanykeinu.babymed.data.source.remote.firebase.Child) : String? {
+        return firebaseHandler.saveChildToFirebase(child)
     }
 
-    fun checkUserFromFirebase(user: User) {
-        firebaseHandler.checkUserFromFirebase(user)
+    fun updateChildToFirebase(childId: String, child: com.kanykeinu.babymed.data.source.remote.firebase.Child){
+       return firebaseHandler.updateChildFromFirebase(childId, child)
     }
 
-    fun saveChildToFirebase(userId: String, child: Child){
-        firebaseHandler.saveChildToFirebase(userId,child)
+    fun removeChildFromFirebase(childId: String){
+        firebaseHandler.removeChildFromFirebase(childId)
     }
 
-    fun updateChildToFirebase(userId: String,childId: String,child: com.kanykeinu.babymed.data.source.remote.firebase.Child){
-        firebaseHandler.updateChildFromFirebase(userId, childId, child)
+    fun saveIllnessToFirebase(childId : String, illness : com.kanykeinu.babymed.data.source.remote.firebase.Illness) : String?{
+        return firebaseHandler.saveIllnessToFirebase(childId, illness)
     }
 
-    fun deleteChildFromFirebase(userId: String, childId: String){
-        firebaseHandler.deleteChildFromFirebase(userId,childId)
+    fun updateIllnessFromFirebase(childId: String, illnessId : String, illness: com.kanykeinu.babymed.data.source.remote.firebase.Illness) {
+        firebaseHandler.updateIllnessFromFirebase(childId,illnessId,illness)
+    }
+
+    fun removeIllnessFromFirebase(childId: String, illnessId: String){
+        firebaseHandler.removeIllnessFromFirebase(childId, illnessId)
     }
 
     fun createUserAccount(email: String, password : String) : Observable<Task<AuthResult>>?{

@@ -55,11 +55,10 @@ class SignInActivity : BaseAuthActivity() {
 
         userViewModel.onSignInSuccess().observe(this, Observer { isSuccessfull ->
             if (isSuccessfull) {
-                prefs.saveUserId(FirebaseAuth.getInstance().currentUser!!.uid)
                 showSuccessToast("Привет. Добро пожаловать в BabyMed!")
+                prefs.saveUserId(FirebaseAuth.getInstance().currentUser!!.uid)
                 goToChildrenList()
             }
-
         })
 
         userViewModel.onSignInError().observe(this, Observer { error ->

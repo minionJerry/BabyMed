@@ -64,17 +64,15 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     private fun injectAddChildViewModel(){
         AndroidInjection.inject(this)
         addEditChildViewModel = ViewModelProviders.of(this,addEditChildViewModelFactory).get(AddEditChildViewModel::class.java)
-        addEditChildViewModel.initDisposableObserver()
+        addEditChildViewModel.initChildSavingObserver()
+        addEditChildViewModel.initChildUpdatingObserver()
 
-        addEditChildViewModel.onError().observe( this, androidx.lifecycle.Observer { error ->
-            if (error!=null)
-                showErrorToast(error)
-        })
-
-        addEditChildViewModel.onComplete().observe(this, androidx.lifecycle.Observer {
-            showSuccessToast(getString(R.string.data_saved))
-            finish()
-        })
+        addEditChildViewModel.onCompleteSaveUpdate().observe(this, androidx.lifecycle.Observer { isSuccessfull ->
+            if (isSuccessfull)  {
+                showSuccessToast(getString(R.string.data_saved))
+                finish()
+            } })
+        addEditChildViewModel.onSaveUpdateError().observe(this, androidx.lifecycle.Observer { error -> showErrorToast(error) })
     }
 
     private fun initActionBar(){
@@ -124,7 +122,6 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     }
 
     private fun saveOrUpdateChild(){
-        val newChild : Child
         val areFieldsFalidated = validateFields()
         if (areFieldsFalidated) {
             wrapperBirthDate.error = null
@@ -134,16 +131,31 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
 
             Log.e("Child", child.toString())
             if (child == null) {
-                newChild = Child(0, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
-                        weight, uriPhoto.toString(), bloodType)
-                addEditChildViewModel.saveChild(newChild)
+               saveChild(weight ,bloodType)
             }
             else {
-                newChild = Child(child!!.id, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
-                        weight, uriPhoto.toString(), bloodType)
-                addEditChildViewModel.updateChild(newChild)
+               updateChild(weight ,bloodType)
             }
         }
+    }
+
+    fun saveChild(weight : Int?, bloodType : Int?){
+        val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
+                weight, uriPhoto.toString(), bloodType,sharedPreferencesManager.getUserId(),null)
+        val newChild = Child(0, null, firebaseChild.name, firebaseChild.birthDate, firebaseChild.gender,
+                firebaseChild.weight, firebaseChild.photoUri, firebaseChild.bloodType)
+        val childFirebaseId = addEditChildViewModel.saveChildToFirebase(firebaseChild)
+        newChild.firebaseId = childFirebaseId
+        addEditChildViewModel.saveChild(newChild)
+    }
+
+    fun updateChild(weight: Int?,bloodType: Int?){
+        val newChild = Child(child!!.id, child!!.firebaseId, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
+                weight, uriPhoto.toString(), bloodType)
+        val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(newChild.name,newChild.birthDate,newChild.gender,newChild.weight,
+                newChild.photoUri,newChild.bloodType,sharedPreferencesManager.getUserId(),null)
+        addEditChildViewModel.updateChild(newChild)
+        addEditChildViewModel.updateChildFromFirebase(child!!.firebaseId!!,firebaseChild)
     }
 
     private fun validateFields() : Boolean{
@@ -212,7 +224,8 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     }
 
     override fun onDestroy() {
-        addEditChildViewModel.disposeObserver()
+        addEditChildViewModel.disposeChildSavingObserver()
+        addEditChildViewModel.disposeChildUpdatingObserver()
         super.onDestroy()
     }
 }

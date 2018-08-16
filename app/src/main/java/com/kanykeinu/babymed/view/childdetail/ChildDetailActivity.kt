@@ -19,7 +19,11 @@ import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.ILLNESS
+import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModel
+import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModelFactory
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
+import com.kanykeinu.babymed.view.addeditillness.AddIllnessViewModel
+import com.kanykeinu.babymed.view.addeditillness.AddIllnessViewModelFactory
 import com.kanykeinu.babymed.view.illnessdetail.IllnessDetailActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_medical_file.*
@@ -28,8 +32,11 @@ import javax.inject.Inject
 class ChildDetailActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var childDetailViewModelFactory: ChildDetailViewModelFactory
-    lateinit var childDetailViewModel: ChildDetailViewModel
+    lateinit var addEditChildViewModelFactory : AddEditChildViewModelFactory
+    lateinit var addEditChildViewModel: AddEditChildViewModel
+    @Inject
+    lateinit var addIllnesViewModelFactory: AddIllnessViewModelFactory
+    lateinit var addIllnessViewModel : AddIllnessViewModel
     private var child : Child? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,44 +45,28 @@ class ChildDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_medical_file)
         initActionBar()
         child = intent.getParcelableExtra<Child>(Constants.CHILD)
-        childDetailViewModel.getChildData(child!!.id)
+        addEditChildViewModel.getChildData(child!!.id)
         retrieveIllnessesFromDb()
         fabAddIllness.setOnClickListener { openAddIllnessScreen() }
     }
 
     private fun injectChildrenDetailViewModel(){
         AndroidInjection.inject(this)
-        childDetailViewModel = ViewModelProviders.of(this,childDetailViewModelFactory).get(ChildDetailViewModel::class.java)
-        childDetailViewModel.initDisposableObserver()
+        addEditChildViewModel = ViewModelProviders.of(this,addEditChildViewModelFactory).get(AddEditChildViewModel::class.java)
+        addEditChildViewModel.initChildDisplayingObserver()
+        addEditChildViewModel.initChildRemovingObserver()
 
-        childDetailViewModel.onSuccess()
-                .observe(this, Observer<List<Illness>> { childIllnesses->
-                    if (childIllnesses.isNotEmpty()) {
-                        initChildIllnesses(childIllnesses)
-                    }
-                })
+        addEditChildViewModel.onCompleteDisplayingChild().observe(this, Observer { child -> initFields(child) })
+        addEditChildViewModel.onDisplayinhChildError().observe(this, Observer { error -> showErrorToast(error) })
 
-        childDetailViewModel.onError()
-                .observe(this, Observer { error->
-                    if (error!=null)
-                        showErrorToast(error)
-                })
+        addEditChildViewModel.onCompleteRemovingChild().observe(this, Observer { isSuccessfull -> if (isSuccessfull)  showSuccessToast(getString(R.string.child_is_deleted)) })
+        addEditChildViewModel.onRemovingChildError().observe(this, Observer { error -> showErrorToast(error) })
 
-        childDetailViewModel.onLoading()
-                .observe(this, Observer { isLoading ->
-                    if (isLoading == false)
-                        progressBarIllnesses.visibility = View.GONE
-                })
+        addIllnessViewModel = ViewModelProviders.of(this,addIllnesViewModelFactory).get(AddIllnessViewModel::class.java)
+        addIllnessViewModel.initGettingIllnessListObserver()
 
-        childDetailViewModel.onCompleteDeleting()
-                .observe(this, Observer { isDeleted ->
-                    showSuccessToast(getString(R.string.child_is_deleted))
-                })
-
-        childDetailViewModel.onGetChildData()
-                .observe(this, Observer { child ->
-                    initFields(child)
-                })
+        addIllnessViewModel.onGetIllnessesComplete().observe(this, Observer { illnesses -> if (illnesses.isNotEmpty()) { initChildIllnesses(illnesses) } })
+        addIllnessViewModel.onGetIllnessesError().observe(this, Observer { error -> showErrorToast(error) })
     }
 
     private fun initChildIllnesses(illnesses : List<Illness>) {
@@ -111,7 +102,7 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     private fun retrieveIllnessesFromDb(){
-        childDetailViewModel.getChildIllnesses(child!!.id)
+        addIllnessViewModel.getChildIllnesses(child!!.id)
     }
 
     private fun openAddIllnessScreen(){
@@ -130,7 +121,6 @@ class ChildDetailActivity : AppCompatActivity() {
                     override fun onDialogClicked() {
                         deleteChild()
                         finish()
-
                     }
                 })
                }
@@ -143,7 +133,7 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     private fun deleteChild(){
-        childDetailViewModel.deleteChildData(child!!)
+        addEditChildViewModel.deleteChildData(child!!)
     }
 
     private fun openEditChildDataScreen(){
@@ -151,8 +141,8 @@ class ChildDetailActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        childDetailViewModel.disposeObserver()
-        childDetailViewModel.disposeChildObserver()
+        addEditChildViewModel.disposeChildDisplayingObserver()
+        addEditChildViewModel.disposeChildRemovingObserver()
         super.onDestroy()
     }
 }

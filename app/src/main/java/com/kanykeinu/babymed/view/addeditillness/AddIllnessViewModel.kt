@@ -12,11 +12,15 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AddIllnessViewModel @Inject constructor(private val babyMedRepository: BabyMedRepository) : ViewModel() {
+    lateinit var disposableObserver : DisposableObserver<Unit>
+    lateinit var disposableUpdatingObserver : DisposableObserver<Unit>
+    lateinit var illnessListObserver: DisposableObserver<List<Illness>>
+
     private var addIllnessError: MutableLiveData<String> = MutableLiveData()
     private var addIllnessComplete : MutableLiveData<Boolean> = MutableLiveData()
-    lateinit var  disposableObserver : DisposableObserver<Unit>
-    lateinit var  disposableUpdatingObserver : DisposableObserver<Unit>
     private var illnessUpdatingComplete : MutableLiveData<Boolean> = MutableLiveData()
+    private var illnessListResult : MutableLiveData<List<Illness>> = MutableLiveData()
+    private var illnessListError : MutableLiveData<String> = MutableLiveData()
 
     fun initDisposableObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
@@ -43,7 +47,22 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
             override fun onError(e: Throwable) {
                 addIllnessError.postValue(e.message)
             }
+        }
+    }
 
+    fun initGettingIllnessListObserver(){
+        //getting list of child`s illnesses
+        illnessListObserver = object : DisposableObserver<List<Illness>>(){
+            override fun onNext(t: List<Illness>) {
+                illnessListResult.postValue(t)
+            }
+
+            override fun onComplete() {
+            }
+
+            override fun onError(e: Throwable) {
+                illnessListError.postValue(e.message)
+            }
         }
     }
 
@@ -54,11 +73,26 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
                 ?.subscribe(disposableObserver)
     }
 
+    fun saveIllnessToFirebase(childId : String, illness: com.kanykeinu.babymed.data.source.remote.firebase.Illness) : String? {
+       return babyMedRepository.saveIllnessToFirebase(childId,illness)
+    }
+
     fun updateIllness(illness: Illness){
         babyMedRepository.updateIllness(illness)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(disposableUpdatingObserver)
+    }
+
+    fun updateIllnessFromFirebase(childId: String, illnessId : String, illness: com.kanykeinu.babymed.data.source.remote.firebase.Illness){
+        babyMedRepository.updateIllnessFromFirebase(childId,illnessId, illness)
+    }
+
+    fun getChildIllnesses(childId : Long){
+        babyMedRepository.getIllnessesFromDb(childId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(illnessListObserver)
     }
 
     fun onComplete() : LiveData<Boolean> {
@@ -73,11 +107,24 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         return addIllnessError
     }
 
+    fun onGetIllnessesComplete() : LiveData<List<Illness>>{
+        return illnessListResult
+    }
+
+    fun onGetIllnessesError() : LiveData<String>{
+        return illnessListError
+    }
+
     fun disposeObserver(){
         if (!disposableObserver.isDisposed)
             disposableObserver.dispose()
 
         if (!disposableUpdatingObserver.isDisposed)
             disposableUpdatingObserver.dispose()
+    }
+
+    fun disposeIllnessListObserver(){
+        if (illnessListObserver.isDisposed)
+            illnessListObserver.dispose()
     }
 }

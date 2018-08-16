@@ -14,9 +14,10 @@ import org.joda.time.format.DateTimeFormat
 @Parcelize
 @Entity(tableName = "child",indices = arrayOf(Index(value = ["name","birth_date"],
         unique = true)))
-data class Child(
+ data class Child(
          @PrimaryKey(autoGenerate = true)
-         val id : Long,
+         var id : Long,
+         var firebaseId : String?,
          val name : String,
          @ColumnInfo(name = "birth_date")
          val birthDate : String,
@@ -27,9 +28,10 @@ data class Child(
          @ColumnInfo(name = "blood_type")
          val bloodType : Int?) : Parcelable{
 
-  companion object {
 
-      fun getCurrentAge(childBirthDate: String): Int {
+companion object {
+
+    fun getCurrentAge(childBirthDate: String): Int {
           val birthDate = DateTimeFormat.forPattern(DATE_FORMAT)
           val date: LocalDate = birthDate.parseLocalDate(childBirthDate)
           val now = LocalDate() // test, in real world without args
@@ -49,5 +51,7 @@ data class Child(
           val illnessAge = Years.yearsBetween(birthDate,illnessDate)
           return illnessAge.years
       }
-  }
+}
+
+
 }

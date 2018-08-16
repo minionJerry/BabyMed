@@ -17,6 +17,7 @@ import kotlinx.android.parcel.Parcelize
 data class Illness(
         @PrimaryKey(autoGenerate = true)
         val id : Long,
+        var firebaseId : String?,
         val name : String,
         val symptoms : String,
         val treatment : String,

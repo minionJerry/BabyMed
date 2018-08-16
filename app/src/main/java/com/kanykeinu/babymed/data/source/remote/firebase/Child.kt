@@ -13,7 +13,8 @@ data class Child(
         val weight: Int?,
         val photoUri: String?,
         val bloodType: Int?,
-        val illnessList: ArrayList<Illness>) : Parcelable{
+        val userId : String?,
+        val illnessList: ArrayList<Illness>?) : Parcelable{
 
     @Exclude
     fun toMap(): Map<String, Any?> {

@@ -92,6 +92,7 @@ class ChildrenActivity : AppCompatActivity() {
 
     private fun goToSignInScreen(){
         startActivity(Intent(this,SignInActivity::class.java))
+        finish()
     }
 
     private fun loadData() {
