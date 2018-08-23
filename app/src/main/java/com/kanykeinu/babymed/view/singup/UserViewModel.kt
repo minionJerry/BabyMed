@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.ValueEventListener
 import com.kanykeinu.babymed.data.source.BabyMedRepository
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,7 +47,7 @@ class UserViewModel @Inject constructor(private val babyMedRepository: BabyMedRe
             }
 
             override fun onNext(t: Task<AuthResult>) {
-                signInComplete.postValue(t.isSuccessful)
+                t.addOnCompleteListener { signInComplete.postValue(t.isSuccessful) }
                 t.addOnFailureListener { signInError.postValue(t.exception?.localizedMessage) }
             }
 
@@ -93,6 +94,10 @@ class UserViewModel @Inject constructor(private val babyMedRepository: BabyMedRe
 
     fun signOutUser(){
         return babyMedRepository.signOut()
+    }
+
+    fun retrieveUserChildren(userId : String, valueEventListener : ValueEventListener){
+        return babyMedRepository.retrieveUserChildren(userId, valueEventListener)
     }
 
     fun disposeSignUpObserver(){

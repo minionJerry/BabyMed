@@ -57,14 +57,14 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private fun injectAddChildViewModel(){
         AndroidInjection.inject(this)
         addIllnessViewModel = ViewModelProviders.of(this,addIllnessViewModelFactory).get(AddIllnessViewModel::class.java)
-        addIllnessViewModel.initDisposableObserver()
+        addIllnessViewModel.initSaveChildObserver()
 
-        addIllnessViewModel.onError().observe( this, androidx.lifecycle.Observer { error ->
+        addIllnessViewModel.onSaveChildError().observe( this, androidx.lifecycle.Observer { error ->
             if (error!=null)
                 showErrorToast(error)
         })
 
-        addIllnessViewModel.onComplete().observe(this, androidx.lifecycle.Observer {
+        addIllnessViewModel.onSaveChildComplete().observe(this, androidx.lifecycle.Observer {
             showSuccessToast(getString(R.string.data_saved))
             finish()
         })
@@ -181,7 +181,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     override fun onDestroy() {
-        addIllnessViewModel.disposeObserver()
+        addIllnessViewModel.disposeSaveChildObserver()
         super.onDestroy()
     }
 }

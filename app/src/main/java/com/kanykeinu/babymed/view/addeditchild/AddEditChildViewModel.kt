@@ -3,6 +3,7 @@ package com.kanykeinu.babymed.view.addeditchild
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.database.ValueEventListener
 import com.kanykeinu.babymed.data.source.BabyMedRepository
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,6 +17,7 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     lateinit var childUpdatingObserver: DisposableObserver<Unit>
     lateinit var childRemovingObserver: DisposableObserver<Any>
     lateinit var childDisplayingObserver: DisposableObserver<Child>
+    lateinit var childrenDeletingObserver : DisposableObserver<Unit>
 
     private var addChildError: MutableLiveData<String> = MutableLiveData()
     private var addChildComplete : MutableLiveData<Boolean> = MutableLiveData()
@@ -23,6 +25,8 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     private var childDisplayingError : MutableLiveData<String> = MutableLiveData()
     private var childRemovingResult : MutableLiveData<Boolean> = MutableLiveData()
     private var childRemovingError : MutableLiveData<String> = MutableLiveData()
+    private var childrenDeleteResult : MutableLiveData<Boolean> = MutableLiveData()
+    private var childrenDeleteError : MutableLiveData<String> = MutableLiveData()
 
     fun initChildSavingObserver(){
         childSavingObserver = object : DisposableObserver<Unit>(){
@@ -85,6 +89,21 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
         }
     }
 
+    fun initChildrenDeletingObserver(){
+        childrenDeletingObserver = object : DisposableObserver<Unit>() {
+            override fun onComplete() {
+                childrenDeleteResult.postValue(true)
+            }
+
+            override fun onNext(t: Unit) {
+            }
+
+            override fun onError(e: Throwable) {
+                childrenDeleteError.postValue(e.localizedMessage)
+            }
+        }
+    }
+
     fun saveChild(child : Child)  {
         babyMedRepository.insertChildToDb(child)
                 ?.subscribeOn(Schedulers.io())
@@ -121,9 +140,16 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     fun updateChildFromFirebase(childId : String, child: com.kanykeinu.babymed.data.source.remote.firebase.Child){
         babyMedRepository.updateChildToFirebase(childId,child)
     }
-    
+
     fun removeChildFromFirebase(childId: String){
         babyMedRepository.removeChildFromFirebase(childId = childId)
+    }
+
+    fun clearChildrenTable(){
+        babyMedRepository.clearChildTable()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(childrenDeletingObserver)
     }
 
     fun disposeChildSavingObserver(){
@@ -147,6 +173,11 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
             childDisplayingObserver.dispose()
     }
 
+    fun disposeChildrenDeletingObserver(){
+        if (!childrenDeletingObserver.isDisposed)
+            childrenDeletingObserver.dispose()
+    }
+
     fun onCompleteSaveUpdate() : LiveData<Boolean> {
         return addChildComplete
     }
@@ -159,7 +190,7 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
         return childDisplayingResult
     }
 
-    fun onDisplayinhChildError() : LiveData<String>{
+    fun onDisplayingChildError() : LiveData<String>{
         return childDisplayingError
     }
 
@@ -171,5 +202,11 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
         return childRemovingError
     }
 
+    fun onChildrenDeletingComplete() : LiveData<Boolean>{
+        return childrenDeleteResult
+    }
 
+    fun onChildrenDeletingError() : LiveData<String>{
+        return childrenDeleteError
+    }
 }

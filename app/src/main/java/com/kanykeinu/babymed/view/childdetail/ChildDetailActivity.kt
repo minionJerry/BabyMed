@@ -24,21 +24,21 @@ import com.kanykeinu.babymed.view.addeditchild.AddEditChildViewModelFactory
 import com.kanykeinu.babymed.view.addeditchild.NewChildActivity
 import com.kanykeinu.babymed.view.addeditillness.AddIllnessViewModel
 import com.kanykeinu.babymed.view.addeditillness.AddIllnessViewModelFactory
+import com.kanykeinu.babymed.view.childrenlist.OnSortChildrenClick
 import com.kanykeinu.babymed.view.illnessdetail.IllnessDetailActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_medical_file.*
 import javax.inject.Inject
 
-class ChildDetailActivity : AppCompatActivity() {
-
+class ChildDetailActivity : AppCompatActivity(){
     @Inject
     lateinit var addEditChildViewModelFactory : AddEditChildViewModelFactory
+
     lateinit var addEditChildViewModel: AddEditChildViewModel
     @Inject
     lateinit var addIllnesViewModelFactory: AddIllnessViewModelFactory
     lateinit var addIllnessViewModel : AddIllnessViewModel
     private var child : Child? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectChildrenDetailViewModel()
@@ -57,7 +57,7 @@ class ChildDetailActivity : AppCompatActivity() {
         addEditChildViewModel.initChildRemovingObserver()
 
         addEditChildViewModel.onCompleteDisplayingChild().observe(this, Observer { child -> initFields(child) })
-        addEditChildViewModel.onDisplayinhChildError().observe(this, Observer { error -> showErrorToast(error) })
+        addEditChildViewModel.onDisplayingChildError().observe(this, Observer { error -> showErrorToast(error) })
 
         addEditChildViewModel.onCompleteRemovingChild().observe(this, Observer { isSuccessfull -> if (isSuccessfull)  showSuccessToast(getString(R.string.child_is_deleted)) })
         addEditChildViewModel.onRemovingChildError().observe(this, Observer { error -> showErrorToast(error) })
@@ -140,6 +140,7 @@ class ChildDetailActivity : AppCompatActivity() {
     private fun openEditChildDataScreen(){
         startActivity(Intent(this,NewChildActivity::class.java).putExtra(CHILD,child))
     }
+
 
     override fun onDestroy() {
         addEditChildViewModel.disposeChildDisplayingObserver()

@@ -25,4 +25,7 @@ interface IllnessDao {
     @Query("Select * from illness where child_id = :id")
     fun getByChildId(id : Long) : Flowable<List<Illness>>
 
+    @Query("DELETE FROM illness")
+    fun clearIllnessTable()
+
 }

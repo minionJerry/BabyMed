@@ -18,17 +18,17 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     lateinit var getIllnessObserver: DisposableObserver<Illness>
     lateinit var removingIllnessObserver: DisposableObserver<Unit>
 
-    private var addIllnessError: MutableLiveData<String> = MutableLiveData()
+    private var addIllnessError : MutableLiveData<String> = MutableLiveData()
     private var addIllnessComplete : MutableLiveData<Boolean> = MutableLiveData()
     private var illnessUpdatingComplete : MutableLiveData<Boolean> = MutableLiveData()
     private var illnessListResult : MutableLiveData<List<Illness>> = MutableLiveData()
     private var illnessListError : MutableLiveData<String> = MutableLiveData()
-    private val illnessRemovingResult: MutableLiveData<Boolean> = MutableLiveData()
+    private val illnessRemovingResult : MutableLiveData<Boolean> = MutableLiveData()
     private val illnessRemovingError : MutableLiveData<String> = MutableLiveData()
     private val getIllnessResult : MutableLiveData<Illness> = MutableLiveData()
     private val getIllnessError : MutableLiveData<String> = MutableLiveData()
 
-    fun initDisposableObserver(){
+    fun initSaveChildObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
             override fun onComplete() {
                 addIllnessComplete.postValue(true)
@@ -149,7 +149,7 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
                 .subscribe(getIllnessObserver)
     }
 
-    fun onComplete() : LiveData<Boolean> {
+    fun onSaveChildComplete() : LiveData<Boolean> {
         return addIllnessComplete
     }
 
@@ -157,7 +157,7 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         return illnessUpdatingComplete
     }
 
-    fun onError() : LiveData<String> {
+    fun onSaveChildError() : LiveData<String> {
         return addIllnessError
     }
 
@@ -185,7 +185,12 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         return getIllnessError
     }
 
-    fun disposeObserver(){
+    fun clearIllnessesTable(){
+        babyMedRepository.clearIllnessTable()
+    }
+
+
+    fun disposeSaveChildObserver(){
         if (!disposableObserver.isDisposed)
             disposableObserver.dispose()
 

@@ -16,6 +16,9 @@ data class Child(
         val userId : String?,
         val illnessList: ArrayList<Illness>?) : Parcelable{
 
+    constructor() : this("","","",0,"",0,"",null)
+
+
     @Exclude
     fun toMap(): Map<String, Any?> {
         val result = HashMap<String,Any?>()

@@ -15,7 +15,11 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
     private var childrenResult: MutableLiveData<List<Child>> = MutableLiveData()
     private var childrenError: MutableLiveData<String> = MutableLiveData()
     private var childrenLoader: MutableLiveData<Boolean> = MutableLiveData()
+    private var sorttedChildrenResult : MutableLiveData<List<Child>> = MutableLiveData()
+    private var sorttedChildrenError : MutableLiveData<String> = MutableLiveData()
+
     lateinit var disposableObserver: DisposableObserver<List<Child>>
+    lateinit var sorttedChildrenObserver : DisposableObserver<List<Child>>
 
     fun onSuccess() : LiveData<List<Child>> {
         return childrenResult
@@ -30,6 +34,7 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
     }
 
     fun getChildrenList(){
+
         disposableObserver = object : DisposableObserver<List<Child>>(){
             override fun onComplete() {
             }
@@ -52,8 +57,82 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
             .subscribe(disposableObserver)
     }
 
+    fun getChildrenSorttedByName(){
+        sorttedChildrenObserver = object : DisposableObserver<List<Child>>(){
+            override fun onComplete() {
+            }
+
+            override fun onNext(t: List<Child>) {
+                sorttedChildrenResult.postValue(t)
+            }
+
+            override fun onError(e: Throwable) {
+                sorttedChildrenError.postValue(e.localizedMessage)
+            }
+        }
+
+        babyMedRepository.getChildrenSortByName()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(sorttedChildrenObserver)
+    }
+
+    fun getChildrenSorttedByBirthdateAsc(){
+        sorttedChildrenObserver = object : DisposableObserver<List<Child>>()
+        {
+            override fun onComplete() {
+            }
+
+            override fun onNext(t: List<Child>) {
+                sorttedChildrenResult.postValue(t)
+            }
+
+            override fun onError(e: Throwable) {
+                sorttedChildrenError.postValue(e.localizedMessage)
+            }
+        }
+
+        babyMedRepository.getChildrenSortByBirthdateAsc()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(sorttedChildrenObserver)
+    }
+
+    fun getChildrenSorttedByBirthdateDesc(){
+        sorttedChildrenObserver = object : DisposableObserver<List<Child>>(){
+            override fun onComplete() {
+            }
+
+            override fun onNext(t: List<Child>) {
+                sorttedChildrenResult.postValue(t)
+            }
+
+            override fun onError(e: Throwable) {
+                sorttedChildrenError.postValue(e.localizedMessage)
+            }
+        }
+
+        babyMedRepository.getChildrenSortByBirthdateDesc()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(sorttedChildrenObserver)
+    }
+
+    fun onSorttedChildrenResult() : LiveData<List<Child>>{
+        return sorttedChildrenResult
+    }
+
+    fun onSorttedChildrenError() : LiveData<String>{
+        return sorttedChildrenError
+    }
+
     fun disposeObserver(){
         if (!disposableObserver.isDisposed)
             disposableObserver.dispose()
+    }
+
+    fun disposeSorttedChildrenObserver(){
+        if (!sorttedChildrenObserver.isDisposed)
+            sorttedChildrenObserver.dispose()
     }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/sortByName"
+            android:title="@string/sortByName"
+            android:icon="@drawable/ic_sort_by_alpha_black_24dp"/>
+    </group>
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/sortByBirthdateAsc"
+            android:icon="@drawable/ic_sort_black_24dp"
+            android:title="@string/sortByBirthdateAsc" />
+        <item
+            android:id="@+id/sortByBirthdateDesc"
+            android:icon="@drawable/ic_sort_black_24dp"
+            android:title="@string/sortByBirthdateDesc" />
+    </group>
+
+</menu>

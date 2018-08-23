@@ -3,6 +3,7 @@ package com.kanykeinu.babymed.data.source
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.ValueEventListener
 import com.kanykeinu.babymed.data.source.local.dao.ChildDao
 import com.kanykeinu.babymed.data.source.local.dao.IllnessDao
 import com.kanykeinu.babymed.data.source.local.entity.Child
@@ -94,6 +95,30 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
 
     fun getCurrentUser() : FirebaseUser? {
         return firebaseHandler.getCurrentUser()
+    }
+
+    fun clearChildTable() : Observable<Unit> {
+        return Observable.fromCallable {childDao.clearChildTable()}
+    }
+
+    fun clearIllnessTable() : Observable<Unit> {
+        return Observable.fromCallable {illnessDao.clearIllnessTable()}
+    }
+
+    fun retrieveUserChildren(userId : String, valueEventListener: ValueEventListener){
+        return firebaseHandler.retrieveUserChildren(userId,valueEventListener)
+    }
+
+    fun getChildrenSortByName() : Observable<List<Child>>{
+        return childDao.getChildrenSortByName().toObservable()
+    }
+
+    fun getChildrenSortByBirthdateAsc() : Observable<List<Child>>{
+        return childDao.getChildrenSortByBirthdateAsc().toObservable()
+    }
+
+    fun getChildrenSortByBirthdateDesc() : Observable<List<Child>>{
+        return childDao.getChildrenSortByBirthdateDesc().toObservable()
     }
 
 }

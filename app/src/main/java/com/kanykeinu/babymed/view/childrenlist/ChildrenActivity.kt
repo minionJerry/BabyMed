@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.R.id.bottomAppBar
@@ -29,18 +30,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.recyclerChildren
 import javax.inject.Inject
 
-class ChildrenActivity : AppCompatActivity() {
-
+class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
     @Inject
     lateinit var childrenViewModelFactory: ChildrenViewModelFactory
+
     lateinit var childrenViewModel: ChildrenViewModel
     @Inject
     lateinit var userViewModelFactory : UserViewModelFactory
     lateinit var userViewModel : UserViewModel
     @Inject
     lateinit var prefs : SharedPreferencesManager
-    @Inject
-    lateinit var firebaseHandler: FirebaseHandler
+    lateinit var bottomDialogFragment: BottomSheetDialogFragment
+
     private val childAdapter = ChildrenAdapter(this,ArrayList(),object : OnChildItemClick{
         override fun onChildClick(child: Child) {
             startActivity(Intent(applicationContext, ChildDetailActivity::class.java).putExtra(Constants.CHILD,child))
@@ -81,12 +82,20 @@ class ChildrenActivity : AppCompatActivity() {
                     if (isLoading == false)
                         progressBar.visibility = View.GONE
                 })
+
+        childrenViewModel.onSorttedChildrenResult()
+                .observe(this, Observer { children ->
+                    initChildrenList(children)
+                bottomDialogFragment.dismiss()})
+
+        childrenViewModel.onSorttedChildrenError()
+                .observe(this, Observer { error -> showErrorToast(error) })
+
     }
 
     private fun checkIfUserAuthorized(){
-        val user = firebaseHandler.getCurrentUser()
-        if (user != null)
-            prefs.saveUserId(user.uid)
+        if (prefs.getUserId() != null)
+            return
         else goToSignInScreen()
     }
 
@@ -117,10 +126,18 @@ class ChildrenActivity : AppCompatActivity() {
         })
     }
 
-    override fun onDestroy() {
-        childrenViewModel.disposeObserver()
-        super.onDestroy()
+    override fun sortByName() {
+        childrenViewModel.getChildrenSorttedByName()
     }
+
+    override fun sortByBirthdateAsc() {
+        childrenViewModel.getChildrenSorttedByBirthdateAsc()
+    }
+
+    override fun sortByBirthdateDesc() {
+        childrenViewModel.getChildrenSorttedByBirthdateDesc()
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main_settings,menu)
@@ -129,10 +146,20 @@ class ChildrenActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
-            R.id.settings -> showInfoToast("Settings is clicked")
+            R.id.settings -> {
+                bottomDialogFragment = BottomSortDialogFragment.newInstance()
+                (bottomDialogFragment as BottomSortDialogFragment).setOnSortChildrenListener(this)
+                bottomDialogFragment.show(supportFragmentManager,"sortDialog")
+            }
             android.R.id.home -> BottomNavigationDialogFragment.newInstance(userViewModel.getCurrentUser()?.displayName).show(supportFragmentManager, "dialog")
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        childrenViewModel.disposeObserver()
+        childrenViewModel.disposeSorttedChildrenObserver()
+        super.onDestroy()
     }
 
 }

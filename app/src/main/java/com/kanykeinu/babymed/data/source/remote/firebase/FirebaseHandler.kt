@@ -3,6 +3,7 @@ package com.kanykeinu.babymed.data.source.remote.firebase
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -67,5 +68,9 @@ class FirebaseHandler {
 
     fun signOut() {
         mAuth.signOut()
+    }
+
+    fun retrieveUserChildren(userId : String, valueEventListener: ValueEventListener){
+        databaseRef.orderByChild("userId").startAt(userId).endAt(userId+"\uf8ff").addListenerForSingleValueEvent(valueEventListener)
     }
 }
