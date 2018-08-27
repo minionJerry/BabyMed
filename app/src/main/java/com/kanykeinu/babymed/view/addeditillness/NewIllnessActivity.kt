@@ -94,6 +94,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         if (illness!=null){
             editTextIllnessName.setText(illness!!.name)
             editTextDate.setText(illness!!.date)
+            editTextChildWeight.setText(illness!!.illnessWeight.toString())
             editTextSymptoms.setText(illness!!.symptoms)
             editTextTreatment.setText(illness!!.treatment)
             imgViewTreatmentPhoto.visibility = View.VISIBLE
@@ -133,7 +134,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private fun saveNewIllness(){
         val illness = Illness(0,null, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
-                      uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
+                      uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = Integer.parseInt(editTextChildWeight.text.toString()))
         val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(illness.name,illness.symptoms,illness.treatment,illness.treatmentPhotoUri,
                                         illness.date,illness.illnessWeight)
         val firebaseId : String? = addIllnessViewModel.saveIllnessToFirebase(child!!.firebaseId!!,firebaseIllness)

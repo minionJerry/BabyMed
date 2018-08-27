@@ -19,13 +19,42 @@
     tools:context=".view.illnessdetail.IllnessDetailActivity">
 
     <TextView
-        android:id="@+id/tvTitleAboutIllness"
+        android:id="@+id/tvChildAgeTitle"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/rubik_light"
+        android:maxLines="2"
+        android:text="@string/age"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvIllnesNameTitle" />
+
+    <TextView
+        android:id="@+id/tvChildMassTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/rubik_light"
+        android:maxLines="2"
+        android:text="@string/weight"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvChildAgeTitle" />
+
+    <TextView
+        android:id="@+id/tvTitleAboutIllness"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="76dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/rubik_medium"
+        android:gravity="center_horizontal"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,96 +64,108 @@
 
     <TextView
         android:id="@+id/tvIllnesNameTitle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
         android:fontFamily="@font/rubik_light"
+        android:maxLines="2"
         android:text="@string/illness"
         android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.038"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitleAboutIllness" />
 
     <TextView
         android:id="@+id/tvIllnesName"
-        android:layout_width="0dp"
+        android:layout_width="246dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/rubik"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleAboutIllness"
+        tools:text="@string/add_child" />
+
+    <TextView
+        android:id="@+id/tvIllnesWeight"
+        android:layout_width="246dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/rubik"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.035"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvIllnesNameTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvChildAge"
+        tools:text="@string/add_child" />
+
+    <TextView
+        android:id="@+id/tvChildAge"
+        android:layout_width="246dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/rubik"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvIllnesName"
         tools:text="@string/add_child" />
 
     <TextView
         android:id="@+id/tvSymptomsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/rubik_light"
         android:text="@string/symptoms"
         android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.035"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvIllnesName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvIllnesWeight" />
 
     <TextView
         android:id="@+id/tvSymptoms"
-        android:layout_width="0dp"
+        android:layout_width="246dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/rubik"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSymptomsTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvIllnesWeight"
         tools:text="@string/avatar_selection" />
 
     <TextView
         android:id="@+id/tvTreatmentTitle"
         android:layout_width="0dp"
-        android:layout_height="17dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/rubik_light"
         android:text="@string/treatment"
         android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.034"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSymptoms" />
 
 
     <TextView
         android:id="@+id/tvTreatment"
-        android:layout_width="0dp"
+        android:layout_width="246dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/rubik"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTreatmentTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvSymptoms"
         tools:text="@string/avatar_selection" />
 
 

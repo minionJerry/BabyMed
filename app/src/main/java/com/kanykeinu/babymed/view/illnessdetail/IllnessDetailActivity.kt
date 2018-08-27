@@ -71,6 +71,8 @@ class IllnessDetailActivity : AppCompatActivity() {
         tvTitleAboutIllness.text = if (child.gender.equals(MALE_GENDER)) getString(R.string.illness_descrip_male,child.name,illness.date)
                                     else getString(R.string.illness_descrip_female,child.name,illness.date)
         tvIllnesName.text = illness.name
+        tvChildAge.text = Child.getIllnessAge(child.birthDate,illness.date).toString()
+        tvIllnesWeight.text = illness.illnessWeight.toString()
         tvSymptoms.text = illness.symptoms
         tvTreatment.text = illness.treatment
         treatmentPhoto.setImageURI(Uri.parse(illness.treatmentPhotoUri))

@@ -27,8 +27,6 @@ class IllnessAdapter(private val mContext: Context, private var objects: List<Il
     override fun onBindViewHolder(holder: IllnessHolder, position: Int) {
         val illness = objects.get(position)
         holder.bind(illness)
-        val child : Child = onAgeSet.getChildAge(illness.childId)
-        holder.getChildAgeEditText()?.append(" " + mContext.getString(R.string.illness_list_item_descrip,Child.getIllnessAge(child.birthDate, illness.date),illness.illnessWeight))
         holder.listen { pos, type -> onIllnessClick.onIllnessClick(illness)  }
     }
 
@@ -36,10 +34,7 @@ class IllnessAdapter(private val mContext: Context, private var objects: List<Il
 
         fun bind(illness: Illness) {
             itemView.tvIllChildIllnessDetails.text = illness.name
-        }
-
-        fun getChildAgeEditText() : TextView? {
-            return itemView.tvIllChildIllnessDetails
+            itemView.tvIllChildIllnessData.text = illness.date
         }
     }
 

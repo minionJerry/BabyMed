@@ -7,6 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Child(
+        var id: String?,
         val name: String,
         val birthDate: String,
         val gender: String?,
@@ -16,7 +17,7 @@ data class Child(
         val userId : String?,
         val illnessList: ArrayList<Illness>?) : Parcelable{
 
-    constructor() : this("","","",0,"",0,"",null)
+    constructor() : this(null,"","","",0,"",0,"",null)
 
 
     @Exclude
@@ -32,4 +33,5 @@ data class Child(
 
         return result
     }
+
 }

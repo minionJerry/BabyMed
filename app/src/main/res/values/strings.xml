@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">BabyMed</string>
-    <string name="add_child">Add Child</string>
+    <string name="add_child" translatable="false">Add Child</string>
     <string name="my_children">Мои дети</string>
-    <string name="add_new_child">Add one more child</string>
-    <string name="child">child</string>
+    <string name="add_new_child" translatable="false">Add one more child</string>
+    <string name="child" translatable="false">child</string>
     <string name="avatar_selection">Выберите аватар</string>
     <string name="from_gallery">Из галереи</string>
     <string name="from_сamera">С камеры</string>
@@ -36,7 +36,6 @@
     <string name="weight">Вес</string>
     <string name="birthdate">Дата рождения</string>
     <string name="age">Возраст</string>
-    <string name="child_diseases">Перенесенные заболевания</string>
     <string name="new_illness">Новое заболевание  </string>
     <string name="illness_name">Название заболевания</string>
     <string name="date">Дата</string>
@@ -55,7 +54,7 @@
     <string name="registration">Регистрация</string>
     <string name="toRegister">Зарегистрироваться</string>
     <string name="orSignIn">или авторизоваться</string>
-    <string name="google">Google</string>
+    <string name="google" translatable="false">Google</string>
     <string name="or">Или</string>
     <string name="confirmPasword">Пароль еще раз</string>
     <string name="enter_login">Введите логин</string>
@@ -74,4 +73,5 @@
     <string name="sortByBirthdate">Сортировать по дате рождения</string>
     <string name="sortByBirthdateAsc">Сортировать по убыванию возраста</string>
     <string name="sortByBirthdateDesc">Сортировать по возрастанию возраста</string>
+    <string name="child_diseases">Перенесенные заболевания</string>
 </resources>

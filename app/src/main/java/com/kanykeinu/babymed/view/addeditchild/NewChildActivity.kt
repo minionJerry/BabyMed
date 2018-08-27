@@ -140,11 +140,13 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     }
 
     fun saveChild(weight : Int?, bloodType : Int?){
-        val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
+        val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(null,editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
                 weight, uriPhoto.toString(), bloodType,sharedPreferencesManager.getUserId(),null)
         val newChild = Child(0, null, firebaseChild.name, firebaseChild.birthDate, firebaseChild.gender,
                 firebaseChild.weight, firebaseChild.photoUri, firebaseChild.bloodType)
         val childFirebaseId = addEditChildViewModel.saveChildToFirebase(firebaseChild)
+        firebaseChild.id = childFirebaseId
+        addEditChildViewModel.updateChildFromFirebase(childFirebaseId!!,firebaseChild)
         newChild.firebaseId = childFirebaseId
         addEditChildViewModel.saveChild(newChild)
     }
@@ -152,7 +154,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     fun updateChild(weight: Int?,bloodType: Int?){
         val newChild = Child(child!!.id, child!!.firebaseId, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
                 weight, uriPhoto.toString(), bloodType)
-        val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(newChild.name,newChild.birthDate,newChild.gender,newChild.weight,
+        val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(newChild.firebaseId,newChild.name,newChild.birthDate,newChild.gender,newChild.weight,
                 newChild.photoUri,newChild.bloodType,sharedPreferencesManager.getUserId(),null)
         addEditChildViewModel.updateChild(newChild)
         addEditChildViewModel.updateChildFromFirebase(child!!.firebaseId!!,firebaseChild)
