@@ -1,9 +1,12 @@
 package com.kanykeinu.babymed.view.addeditchild
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.UploadTask
 import com.kanykeinu.babymed.data.source.BabyMedRepository
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +21,7 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     lateinit var childRemovingObserver: DisposableObserver<Any>
     lateinit var childDisplayingObserver: DisposableObserver<Child>
     lateinit var childrenDeletingObserver : DisposableObserver<Unit>
-
+    lateinit var saveAvatarObserver: DisposableObserver<UploadTask>
     private var addChildError: MutableLiveData<String> = MutableLiveData()
     private var addChildComplete : MutableLiveData<Boolean> = MutableLiveData()
     private var childDisplayingResult : MutableLiveData<Child> = MutableLiveData()
@@ -27,6 +30,8 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     private var childRemovingError : MutableLiveData<String> = MutableLiveData()
     private var childrenDeleteResult : MutableLiveData<Boolean> = MutableLiveData()
     private var childrenDeleteError : MutableLiveData<String> = MutableLiveData()
+    private val onAvatarSavingSuccess: MutableLiveData<Uri> = MutableLiveData()
+    private val onAvatarSavingError : MutableLiveData<String> = MutableLiveData()
 
     fun initChildSavingObserver(){
         childSavingObserver = object : DisposableObserver<Unit>(){
@@ -104,7 +109,37 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
         }
     }
 
+    fun initSaveChildAvatarObserver(){
+        saveAvatarObserver = object : DisposableObserver<UploadTask>(){
+            override fun onComplete() {
+            }
+
+            override fun onNext(t: UploadTask) {
+                t.addOnSuccessListener { taskSnapshot ->
+                   taskSnapshot.storage.downloadUrl.addOnCompleteListener { task: Task<Uri> -> onAvatarSavingSuccess.postValue(task.result) }}
+                t.addOnFailureListener { exception -> onAvatarSavingError.postValue(exception.localizedMessage) }
+            }
+
+            override fun onError(e: Throwable) {
+                onAvatarSavingError.postValue(e.localizedMessage)
+            }
+        }
+    }
+
     fun saveChild(child : Child)  {
+        childSavingObserver = object : DisposableObserver<Unit>(){
+            override fun onComplete() {
+                addChildComplete.postValue(true)
+            }
+
+            override fun onNext(t: Unit) {
+            }
+
+            override fun onError(e: Throwable) {
+                addChildError.postValue(e.message)
+            }
+        }
+
         babyMedRepository.insertChildToDb(child)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
@@ -145,6 +180,21 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
         babyMedRepository.removeChildFromFirebase(childId = childId)
     }
 
+    fun saveChildAvatarToFirebase(uri : Uri) {
+       babyMedRepository.saveImageToFirebase(uri)
+               .subscribeOn(Schedulers.newThread())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribe(saveAvatarObserver)
+    }
+
+    fun getAvatarPath() : MutableLiveData<Uri>{
+        return onAvatarSavingSuccess
+    }
+
+    fun getAvatarSavingError() : MutableLiveData<String>{
+        return onAvatarSavingError
+    }
+
     fun clearChildrenTable(){
         babyMedRepository.clearChildTable()
                 .subscribeOn(Schedulers.newThread())
@@ -178,6 +228,11 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
             childrenDeletingObserver.dispose()
     }
 
+    fun disposeSaveAvatarObserver(){
+        if (!saveAvatarObserver.isDisposed)
+            saveAvatarObserver.dispose()
+    }
+
     fun onCompleteSaveUpdate() : LiveData<Boolean> {
         return addChildComplete
     }
@@ -209,4 +264,5 @@ class AddEditChildViewModel @Inject constructor(private val babyMedRepository: B
     fun onChildrenDeletingError() : LiveData<String>{
         return childrenDeleteError
     }
+
 }

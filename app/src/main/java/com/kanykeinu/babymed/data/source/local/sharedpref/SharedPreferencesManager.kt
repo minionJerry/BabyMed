@@ -22,6 +22,6 @@ class SharedPreferencesManager(context: Context) {
     }
 
     fun getUserId() : String? {
-        return sharedpreferences?.getString(USER_ID,"")
+        return sharedpreferences?.getString(USER_ID,null)
     }
 }

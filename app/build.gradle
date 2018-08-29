@@ -44,6 +44,7 @@ dependencies {
     def moshiKotlinVersion = "1.5.0"
     def playServicesVersion = "15.0.1"
     def firebaseAuthVersion = "16.0.3"
+    def firebaseStorageVersion = "16.0.1"
     def firebaseDatabaseVersion = "16.0.1"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -96,4 +97,5 @@ dependencies {
     implementation "com.google.firebase:firebase-database:$firebaseDatabaseVersion"
     implementation "com.google.firebase:firebase-auth:$firebaseAuthVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
+    implementation "com.google.firebase:firebase-storage:$firebaseStorageVersion"
 }

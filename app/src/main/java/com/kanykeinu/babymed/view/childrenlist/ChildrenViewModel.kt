@@ -57,7 +57,7 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
             .subscribe(disposableObserver)
     }
 
-    fun getChildrenSorttedByName(){
+    fun initSorttedChildrenObserver(){
         sorttedChildrenObserver = object : DisposableObserver<List<Child>>(){
             override fun onComplete() {
             }
@@ -70,7 +70,9 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
                 sorttedChildrenError.postValue(e.localizedMessage)
             }
         }
+    }
 
+    fun getChildrenSorttedByName(){
         babyMedRepository.getChildrenSortByName()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -78,20 +80,6 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
     }
 
     fun getChildrenSorttedByBirthdateAsc(){
-        sorttedChildrenObserver = object : DisposableObserver<List<Child>>()
-        {
-            override fun onComplete() {
-            }
-
-            override fun onNext(t: List<Child>) {
-                sorttedChildrenResult.postValue(t)
-            }
-
-            override fun onError(e: Throwable) {
-                sorttedChildrenError.postValue(e.localizedMessage)
-            }
-        }
-
         babyMedRepository.getChildrenSortByBirthdateAsc()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -99,19 +87,6 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
     }
 
     fun getChildrenSorttedByBirthdateDesc(){
-        sorttedChildrenObserver = object : DisposableObserver<List<Child>>(){
-            override fun onComplete() {
-            }
-
-            override fun onNext(t: List<Child>) {
-                sorttedChildrenResult.postValue(t)
-            }
-
-            override fun onError(e: Throwable) {
-                sorttedChildrenError.postValue(e.localizedMessage)
-            }
-        }
-
         babyMedRepository.getChildrenSortByBirthdateDesc()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

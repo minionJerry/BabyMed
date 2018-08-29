@@ -1,9 +1,11 @@
 package com.kanykeinu.babymed.data.source
 
+import android.net.Uri
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.UploadTask
 import com.kanykeinu.babymed.data.source.local.dao.ChildDao
 import com.kanykeinu.babymed.data.source.local.dao.IllnessDao
 import com.kanykeinu.babymed.data.source.local.entity.Child
@@ -119,6 +121,10 @@ class BabyMedRepository @Inject constructor(val childDao : ChildDao, val illness
 
     fun getChildrenSortByBirthdateDesc() : Observable<List<Child>>{
         return childDao.getChildrenSortByBirthdateDesc().toObservable()
+    }
+
+    fun saveImageToFirebase(photoUri : Uri) : Observable<UploadTask> {
+        return firebaseHandler.saveImageToFirebaseStorage(photoUri)
     }
 
 }

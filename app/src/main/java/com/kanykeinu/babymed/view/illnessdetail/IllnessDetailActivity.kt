@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
 import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
@@ -75,7 +76,9 @@ class IllnessDetailActivity : AppCompatActivity() {
         tvIllnesWeight.text = illness.illnessWeight.toString()
         tvSymptoms.text = illness.symptoms
         tvTreatment.text = illness.treatment
-        treatmentPhoto.setImageURI(Uri.parse(illness.treatmentPhotoUri))
+        Glide.with(this)
+                .load(illness.treatmentPhotoUri)
+                .into(treatmentPhoto)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

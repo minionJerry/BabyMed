@@ -63,6 +63,7 @@ class BottomNavigationDialogFragment : BottomSheetDialogFragment() {
 
     private fun goToSignInScreen(){
         startActivity(Intent(context,SignInActivity::class.java))
+        activity?.finish()
     }
 
     private fun disableNavigationViewScrollbars(navigation_view: NavigationView?) {

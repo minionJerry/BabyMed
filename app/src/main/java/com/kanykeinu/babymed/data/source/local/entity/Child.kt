@@ -26,7 +26,7 @@ import org.joda.time.format.DateTimeFormat
          @ColumnInfo(name = "photo_uri")
          val photoUri : String?,
          @ColumnInfo(name = "blood_type")
-         val bloodType : Int?) : Parcelable{
+         val bloodType : String?) : Parcelable{
 
 
 companion object {

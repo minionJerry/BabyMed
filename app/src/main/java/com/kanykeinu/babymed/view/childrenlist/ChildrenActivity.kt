@@ -2,6 +2,7 @@ package com.kanykeinu.babymed.view.childrenlist
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -33,7 +34,6 @@ import javax.inject.Inject
 class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
     @Inject
     lateinit var childrenViewModelFactory: ChildrenViewModelFactory
-
     lateinit var childrenViewModel: ChildrenViewModel
     @Inject
     lateinit var userViewModelFactory : UserViewModelFactory
@@ -64,6 +64,7 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
         AndroidInjection.inject(this)
         childrenViewModel = ViewModelProviders.of(this,childrenViewModelFactory).get(ChildrenViewModel::class.java)
         userViewModel = ViewModelProviders.of(this, userViewModelFactory).get(UserViewModel::class.java)
+        childrenViewModel.initSorttedChildrenObserver()
 
         childrenViewModel.onSuccess()
                 .observe(this, Observer<List<Child>> { children->
@@ -94,14 +95,15 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
     }
 
     private fun checkIfUserAuthorized(){
-        if (prefs.getUserId() != null)
+        if (prefs.getUserId() != null) {
+            Log.e("PREFERENCES ---> ",  prefs.getUserId() )
             return
+        }
         else goToSignInScreen()
     }
 
     private fun goToSignInScreen(){
         startActivity(Intent(this,SignInActivity::class.java))
-        finish()
     }
 
     private fun loadData() {
@@ -151,7 +153,9 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
                 (bottomDialogFragment as BottomSortDialogFragment).setOnSortChildrenListener(this)
                 bottomDialogFragment.show(supportFragmentManager,"sortDialog")
             }
-            android.R.id.home -> BottomNavigationDialogFragment.newInstance(userViewModel.getCurrentUser()?.displayName).show(supportFragmentManager, "dialog")
+            android.R.id.home -> {
+                BottomNavigationDialogFragment.newInstance(userViewModel.getCurrentUser()?.displayName).show(supportFragmentManager, "dialog")
+            }
         }
         return super.onOptionsItemSelected(item)
     }

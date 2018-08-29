@@ -13,11 +13,11 @@ data class Child(
         val gender: String?,
         val weight: Int?,
         val photoUri: String?,
-        val bloodType: Int?,
+        val bloodType: String?,
         val userId : String?,
         val illnessList: ArrayList<Illness>?) : Parcelable{
 
-    constructor() : this(null,"","","",0,"",0,"",null)
+    constructor() : this(null,"","","",0,"","","",null)
 
 
     @Exclude

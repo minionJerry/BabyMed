@@ -74,4 +74,12 @@
     <string name="sortByBirthdateAsc">Сортировать по убыванию возраста</string>
     <string name="sortByBirthdateDesc">Сортировать по возрастанию возраста</string>
     <string name="child_diseases">Перенесенные заболевания</string>
+    <string name="blood_type_0_pos" translatable="false"> 1(0) Rh+</string>
+    <string name="blood_type_0_neg" translatable="false"> 1(0) Rh-</string>
+    <string name="blood_type_A_pos" translatable="false"> 2(A) Rh+</string>
+    <string name="blood_type_A_neg" translatable="false"> 2(A) Rh-</string>
+    <string name="blood_type_B_pos" translatable="false"> 3(B) Rh+</string>
+    <string name="blood_type_B_neg" translatable="false"> 3(B) Rh-</string>
+    <string name="blood_type_AB_pos" translatable="false"> 4(AB) Rh+</string>
+    <string name="blood_type_AB_neg" translatable="false"> 4(AB) Rh-</string>
 </resources>

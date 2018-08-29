@@ -1,8 +1,11 @@
 package com.kanykeinu.babymed.view.addeditillness
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.database.MutableData
+import com.google.firebase.storage.UploadTask
 import com.kanykeinu.babymed.data.source.BabyMedRepository
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
@@ -17,7 +20,7 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     lateinit var illnessListObserver: DisposableObserver<List<Illness>>
     lateinit var getIllnessObserver: DisposableObserver<Illness>
     lateinit var removingIllnessObserver: DisposableObserver<Unit>
-
+    lateinit var  savingTreatmentPhotoObserver: DisposableObserver<UploadTask>
     private var addIllnessError : MutableLiveData<String> = MutableLiveData()
     private var addIllnessComplete : MutableLiveData<Boolean> = MutableLiveData()
     private var illnessUpdatingComplete : MutableLiveData<Boolean> = MutableLiveData()
@@ -27,6 +30,8 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
     private val illnessRemovingError : MutableLiveData<String> = MutableLiveData()
     private val getIllnessResult : MutableLiveData<Illness> = MutableLiveData()
     private val getIllnessError : MutableLiveData<String> = MutableLiveData()
+    private val treatmentPhotoUri : MutableLiveData<Uri> = MutableLiveData()
+    private val treatmentPhotoUriError: MutableLiveData<String> = MutableLiveData()
 
     fun initSaveChildObserver(){
         disposableObserver = object : DisposableObserver<Unit>(){
@@ -102,6 +107,23 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         }
     }
 
+    fun initSavingTreatmentPhotoObserver(){
+        savingTreatmentPhotoObserver = object : DisposableObserver<UploadTask>(){
+            override fun onComplete() {
+            }
+
+            override fun onNext(t: UploadTask) {
+                t.addOnSuccessListener { taskSnapshot ->
+                    taskSnapshot.storage.downloadUrl.addOnCompleteListener { task -> treatmentPhotoUri.postValue(task.result)  } }
+                t.addOnFailureListener { exception -> treatmentPhotoUriError.postValue(exception.localizedMessage)  }
+            }
+
+            override fun onError(e: Throwable) {
+                treatmentPhotoUriError.postValue(e.localizedMessage)
+            }
+        }
+    }
+
     fun saveIllness(illness : Illness)  {
         babyMedRepository.insertIllnessToBd(illness)
                 ?.subscribeOn(Schedulers.io())
@@ -140,6 +162,13 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
 
     fun removeIllnessFromFirebase(childId: String, illnessId : String){
         babyMedRepository.removeIllnessFromFirebase(childId,illnessId)
+    }
+
+    fun saveTreatmentPhotoToFirebase(uri : Uri) {
+        babyMedRepository.saveImageToFirebase(uri)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(savingTreatmentPhotoObserver)
     }
 
     fun getIllness(id : Long){
@@ -185,10 +214,17 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
         return getIllnessError
     }
 
+    fun onGetTreatmentPhoto() : LiveData<Uri>{
+        return treatmentPhotoUri
+    }
+
+    fun onGetTreatmentPhotoError() : LiveData<String>{
+        return treatmentPhotoUriError
+    }
+
     fun clearIllnessesTable(){
         babyMedRepository.clearIllnessTable()
     }
-
 
     fun disposeSaveChildObserver(){
         if (!disposableObserver.isDisposed)
@@ -213,5 +249,8 @@ class AddIllnessViewModel @Inject constructor(private val babyMedRepository: Bab
             removingIllnessObserver.dispose()
     }
 
-
+    fun disposeSaveTreatmentPhotoObserver(){
+        if (!savingTreatmentPhotoObserver.isDisposed)
+            savingTreatmentPhotoObserver.dispose()
+    }
 }

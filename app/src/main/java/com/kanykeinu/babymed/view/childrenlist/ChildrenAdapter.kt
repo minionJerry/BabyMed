@@ -14,6 +14,9 @@ import com.kanykeinu.babymed.R
 import com.kanykeinu.babymed.utils.listen
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import kotlinx.android.synthetic.main.children_list_item.view.*
+import com.kanykeinu.babymed.R.id.imageView
+
+
 
 
 class ChildrenAdapter(private val mContext: Context, private var objects: MutableList<Child>, private var onChildItemClick: OnChildItemClick) : RecyclerView.Adapter<ChildrenAdapter.ChildHolder>() {
@@ -45,8 +48,11 @@ class ChildrenAdapter(private val mContext: Context, private var objects: Mutabl
         fun bind(child: Child, mContext: Context) {
             itemView.childName.text = child.name
             itemView.childAge.text =  mContext.getString(R.string.child_age,Child.getCurrentAge(childBirthDate = child.birthDate).toString())
-            if (child.photoUri!=null)
-                itemView.childPhoto.setImageURI(Uri.parse(child.photoUri))
+            if (child.photoUri!=null){
+                Glide.with(mContext)
+                        .load(child.photoUri)
+                        .into(itemView.childPhoto)
+            }
         }
     }
 }

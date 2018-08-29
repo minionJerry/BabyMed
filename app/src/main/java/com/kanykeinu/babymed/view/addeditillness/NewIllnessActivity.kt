@@ -3,12 +3,16 @@ package com.kanykeinu.babymed.view.addeditillness
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
 import com.kanykeinu.babymed.R
+import com.kanykeinu.babymed.R.id.editTextIllnessName
+import com.kanykeinu.babymed.R.string.illness
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.utils.*
@@ -32,6 +36,8 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private var illness : Illness? = null
     private var uriTreatmentPhoto : Uri? = null
     lateinit var cameraRequestHandler: CameraRequestHandler
+
+    val PHOTO_NAME = "IMG_" + System.currentTimeMillis() + ".jpg"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +64,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         AndroidInjection.inject(this)
         addIllnessViewModel = ViewModelProviders.of(this,addIllnessViewModelFactory).get(AddIllnessViewModel::class.java)
         addIllnessViewModel.initSaveChildObserver()
+        addIllnessViewModel.initSavingTreatmentPhotoObserver()
 
         addIllnessViewModel.onSaveChildError().observe( this, androidx.lifecycle.Observer { error ->
             if (error!=null)
@@ -74,6 +81,13 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 showSuccessToast(getString(R.string.data_saved))
                 finish()
             }
+        })
+
+        addIllnessViewModel.onGetTreatmentPhoto().observe(this, androidx.lifecycle.Observer {
+            path -> saveOrUpdateIllness(path)})
+        addIllnessViewModel.onGetTreatmentPhotoError().observe(this, androidx.lifecycle.Observer { error ->
+            showErrorToast(error)
+             Log.e(this.localClassName, error)
         })
     }
 
@@ -98,7 +112,9 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             editTextSymptoms.setText(illness!!.symptoms)
             editTextTreatment.setText(illness!!.treatment)
             imgViewTreatmentPhoto.visibility = View.VISIBLE
-            imgViewTreatmentPhoto.setImageURI(Uri.parse(illness!!.treatmentPhotoUri))
+            Glide.with(this)
+                    .load(illness!!.treatmentPhotoUri)
+                    .into(imgViewTreatmentPhoto)
         }
     }
 
@@ -115,27 +131,34 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 || editTextIllnessName.text!!.equals("") || editTextDate.text.toString().equals(""))
             showErrorToast(getString(R.string.empty_fields_not_allowed))
         else {
-            if (illness!=null)
-                updateExistingIllness()
-            else saveNewIllness()
+            if (!illness?.treatmentPhotoUri?.equals(uriTreatmentPhoto.toString())!!)
+                uriTreatmentPhoto?.let { addIllnessViewModel.saveTreatmentPhotoToFirebase(it)
+            } else saveOrUpdateIllness(uriTreatmentPhoto)
         }
     }
 
-    private fun updateExistingIllness(){
+
+    private fun saveOrUpdateIllness(firebaseStoragePath : Uri?){
+        if (illness!=null)
+            updateExistingIllness(firebaseStoragePath)
+        else saveNewIllness(firebaseStoragePath)
+    }
+
+    private fun updateExistingIllness(firebaseStoragePath : Uri?){
         val illnessId = illness!!.id
         val newIllness = Illness(illnessId, illness!!.firebaseId,  editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
-                      uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = child!!.weight!!)
+                firebaseStoragePath.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = Integer.parseInt(editTextChildWeight.text.toString()))
         addIllnessViewModel.updateIllness(newIllness)
-        val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(newIllness.name,newIllness.symptoms,newIllness.treatment,newIllness.treatmentPhotoUri,
+        val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(0,newIllness.name,newIllness.symptoms,newIllness.treatment,newIllness.treatmentPhotoUri,
                 newIllness.date,newIllness.illnessWeight)
         addIllnessViewModel.updateIllnessFromFirebase(child!!.firebaseId!!, illness!!.firebaseId!!, firebaseIllness)
     }
 
 
-    private fun saveNewIllness(){
+    private fun saveNewIllness(firebaseStoragePath : Uri?){
         val illness = Illness(0,null, editTextIllnessName.text.toString(), editTextSymptoms.text.toString(), editTextTreatment.text.toString(),
-                      uriTreatmentPhoto.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = Integer.parseInt(editTextChildWeight.text.toString()))
-        val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(illness.name,illness.symptoms,illness.treatment,illness.treatmentPhotoUri,
+                firebaseStoragePath.toString(), editTextDate.text.toString(), childId = child!!.id, illnessWeight = Integer.parseInt(editTextChildWeight.text.toString()))
+        val firebaseIllness = com.kanykeinu.babymed.data.source.remote.firebase.Illness(0,illness.name,illness.symptoms,illness.treatment,illness.treatmentPhotoUri,
                                         illness.date,illness.illnessWeight)
         val firebaseId : String? = addIllnessViewModel.saveIllnessToFirebase(child!!.firebaseId!!,firebaseIllness)
         illness.firebaseId = firebaseId
@@ -183,6 +206,7 @@ class NewIllnessActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     override fun onDestroy() {
         addIllnessViewModel.disposeSaveChildObserver()
+        addIllnessViewModel.disposeSaveTreatmentPhotoObserver()
         super.onDestroy()
     }
 }

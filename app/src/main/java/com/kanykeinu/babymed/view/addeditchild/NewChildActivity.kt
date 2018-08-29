@@ -57,6 +57,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBirthDate.setOnClickListener(this)
         editTextBirthDate.setOnFocusChangeListener(this)
         editTextGender.setOnClickListener(this)
+        editTextBloodType.setOnClickListener(this)
         editTextName.setOnFocusChangeListener(this)
         btnSave.setOnClickListener(this)
     }
@@ -66,6 +67,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         addEditChildViewModel = ViewModelProviders.of(this,addEditChildViewModelFactory).get(AddEditChildViewModel::class.java)
         addEditChildViewModel.initChildSavingObserver()
         addEditChildViewModel.initChildUpdatingObserver()
+        addEditChildViewModel.initSaveChildAvatarObserver()
 
         addEditChildViewModel.onCompleteSaveUpdate().observe(this, androidx.lifecycle.Observer { isSuccessfull ->
             if (isSuccessfull)  {
@@ -73,6 +75,9 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
                 finish()
             } })
         addEditChildViewModel.onSaveUpdateError().observe(this, androidx.lifecycle.Observer { error -> showErrorToast(error) })
+
+        addEditChildViewModel.getAvatarPath().observe(this, androidx.lifecycle.Observer { path -> saveOrUpdateChild(path) })
+        addEditChildViewModel.getAvatarSavingError().observe(this, androidx.lifecycle.Observer { error -> showErrorToast(error) })
     }
 
     private fun initActionBar(){
@@ -90,7 +95,9 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
             editTextGender.setText(child.gender)
             uriPhoto = Uri.parse(child.photoUri)
             if (!uriPhoto.toString().equals("null"))
-                imgChildPhoto.setImageURI(uriPhoto)
+                Glide.with(this)
+                        .load(uriPhoto)
+                        .into(imgChildPhoto)
     }
 
     private fun setupCameraCropConfigs(){
@@ -102,7 +109,10 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     override fun onClick(v: View?) {
         when(v){
             btnSave -> {
-                saveOrUpdateChild()
+//                saveOrUpdateChild()
+                // save first avatar at storage to get its path
+                saveChildAvatar()
+
             }
             imageButton -> {
                 cameraRequestHandler.showPictureDialog()
@@ -116,34 +126,37 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
             editTextBirthDate -> {
                 setChildBirthdate()
             }
+            editTextBloodType -> {
+                DialogView.bloodTypeDialog(this, WeakReference(editTextBloodType))
+            }
             else ->{
             }
         }
     }
 
-    private fun saveOrUpdateChild(){
+    private fun saveOrUpdateChild(avatarPath : Uri){
         val areFieldsFalidated = validateFields()
         if (areFieldsFalidated) {
             wrapperBirthDate.error = null
             textInputLayout.error = null
             val weight = if (!editTextWeight.text.toString().equals("")) editTextWeight.text.toString().toInt() else null
-            val bloodType = if (!editTextBloodType.text.toString().equals("")) editTextBloodType.text.toString().toInt() else null
+            val bloodType = if (!editTextBloodType.text.toString().equals("")) editTextBloodType.text.toString() else null
 
             Log.e("Child", child.toString())
             if (child == null) {
-               saveChild(weight ,bloodType)
+               saveChild(avatarPath, weight, bloodType)
             }
             else {
-               updateChild(weight ,bloodType)
+               updateChild(avatarPath, weight, bloodType)
             }
         }
     }
 
-    fun saveChild(weight : Int?, bloodType : Int?){
+    fun saveChild(avatarPath: Uri, weight : Int?, bloodType : String?){
         val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(null,editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
-                weight, uriPhoto.toString(), bloodType,sharedPreferencesManager.getUserId(),null)
+                weight, avatarPath.toString(), bloodType,sharedPreferencesManager.getUserId(),null)
         val newChild = Child(0, null, firebaseChild.name, firebaseChild.birthDate, firebaseChild.gender,
-                firebaseChild.weight, firebaseChild.photoUri, firebaseChild.bloodType)
+                firebaseChild.weight, firebaseChild.photoUri , firebaseChild.bloodType)
         val childFirebaseId = addEditChildViewModel.saveChildToFirebase(firebaseChild)
         firebaseChild.id = childFirebaseId
         addEditChildViewModel.updateChildFromFirebase(childFirebaseId!!,firebaseChild)
@@ -151,9 +164,15 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         addEditChildViewModel.saveChild(newChild)
     }
 
-    fun updateChild(weight: Int?,bloodType: Int?){
+    private fun saveChildAvatar(){
+        if (!child?.photoUri?.equals(uriPhoto.toString())!!)
+                addEditChildViewModel.saveChildAvatarToFirebase(uriPhoto!!)
+        else saveOrUpdateChild(uriPhoto!!)
+    }
+
+    fun updateChild(avatarPath: Uri, weight: Int?,bloodType: String?){
         val newChild = Child(child!!.id, child!!.firebaseId, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
-                weight, uriPhoto.toString(), bloodType)
+                weight, avatarPath.toString(), bloodType)
         val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(newChild.firebaseId,newChild.name,newChild.birthDate,newChild.gender,newChild.weight,
                 newChild.photoUri,newChild.bloodType,sharedPreferencesManager.getUserId(),null)
         addEditChildViewModel.updateChild(newChild)
@@ -228,6 +247,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     override fun onDestroy() {
         addEditChildViewModel.disposeChildSavingObserver()
         addEditChildViewModel.disposeChildUpdatingObserver()
+        addEditChildViewModel.disposeSaveAvatarObserver()
         super.onDestroy()
     }
 }

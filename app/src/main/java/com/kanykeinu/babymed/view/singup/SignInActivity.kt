@@ -65,6 +65,7 @@ class SignInActivity : BaseAuthActivity() {
         addEditChildViewModel.initChildSavingObserver()
         addEditChildViewModel.initChildrenDeletingObserver()
         addEditIllnessViewModel.initSaveChildObserver()
+        userViewModel.initSignInObserver()
 
         addEditChildViewModel.onCompleteSaveUpdate().observe(this, Observer { isSuccessfull ->
             if (isSuccessfull) showSuccessToast(getString(R.string.data_saved)) })

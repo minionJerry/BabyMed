@@ -28,6 +28,7 @@ import com.kanykeinu.babymed.view.childrenlist.OnSortChildrenClick
 import com.kanykeinu.babymed.view.illnessdetail.IllnessDetailActivity
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_medical_file.*
+import kotlinx.android.synthetic.main.children_list_item.view.*
 import javax.inject.Inject
 
 class ChildDetailActivity : AppCompatActivity(){
@@ -98,7 +99,9 @@ class ChildDetailActivity : AppCompatActivity(){
         tvBloodType.text = if (child.bloodType != null) child.bloodType.toString() else ""
         tvGender.text = child.gender
         tvWeight.text = if (child.weight != null) child.weight.toString() else ""
-        childAvatar.setImageURI(Uri.parse(child.photoUri))
+        Glide.with(this)
+                .load(child.photoUri)
+                .into(childAvatar)
     }
 
     private fun retrieveIllnessesFromDb(){

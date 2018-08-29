@@ -109,7 +109,8 @@
                     android:ems="10"
                     android:hint="@string/blood_type"
                     android:fontFamily="@font/rubik_light"
-                    android:inputType="number"
+                    android:focusable="false"
+                    android:inputType="text"
                     tools:layout_editor_absoluteX="0dp"
                     tools:layout_editor_absoluteY="186dp" />
 

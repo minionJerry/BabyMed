@@ -2,6 +2,7 @@ package com.kanykeinu.babymed.data.source.remote.firebase
 
 import android.app.Application
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -12,6 +13,8 @@ import com.google.firebase.database.*
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import java.util.*
@@ -20,6 +23,13 @@ class FirebaseHandler {
     private var database = FirebaseDatabase.getInstance()
     private var databaseRef = database.getReference().child("children")
     private var mAuth = FirebaseAuth.getInstance()
+    private var storage = FirebaseStorage.getInstance()
+    private var storageRef = storage.getReference("images/")
+
+    fun saveImageToFirebaseStorage(imageUri : Uri): Observable<UploadTask> {
+        val imagePath = storageRef.child(imageUri.lastPathSegment)
+        return Observable.fromCallable {imagePath.putFile(imageUri) }
+    }
 
     fun saveChildToFirebase(child : Child) : String?{
         val childId: String? = databaseRef.push().key
