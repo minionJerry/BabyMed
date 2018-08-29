@@ -11,5 +11,5 @@ object Constants {
     const val RAW_DIRECTORY = "/sdcard/babymed/Pictures"
     const val DATE_FORMAT = "dd MMMM yyyy"
     const val DATABASE_NAME = "BabyMed.db"
-    val PHOTO_NAME = "IMG_" + System.currentTimeMillis() + ".jpg"
+
 }

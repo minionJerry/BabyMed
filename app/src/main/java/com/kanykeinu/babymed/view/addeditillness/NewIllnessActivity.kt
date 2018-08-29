@@ -16,7 +16,6 @@ import com.kanykeinu.babymed.R.string.illness
 import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.entity.Illness
 import com.kanykeinu.babymed.utils.*
-import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
 import com.tsongkha.spinnerdatepicker.DatePicker

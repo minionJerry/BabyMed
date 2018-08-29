@@ -19,7 +19,6 @@ import com.kanykeinu.babymed.data.source.local.entity.Child
 import com.kanykeinu.babymed.data.source.local.sharedpref.SharedPreferencesManager
 import com.kanykeinu.babymed.utils.*
 import com.kanykeinu.babymed.utils.Constants.CHILD
-import com.kanykeinu.babymed.utils.Constants.PHOTO_NAME
 import com.mikelau.croperino.CroperinoConfig
 import com.mikelau.croperino.CroperinoFileUtil
 import com.tsongkha.spinnerdatepicker.DatePicker
@@ -43,6 +42,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     private var uriPhoto: Uri? = null
     private var child : Child? = null
     lateinit var cameraRequestHandler: CameraRequestHandler
+    val PHOTO_NAME = "IMG_" + System.currentTimeMillis() + ".jpg"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +60,10 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         editTextBloodType.setOnClickListener(this)
         editTextName.setOnFocusChangeListener(this)
         btnSave.setOnClickListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     private fun injectAddChildViewModel(){
@@ -109,10 +113,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     override fun onClick(v: View?) {
         when(v){
             btnSave -> {
-//                saveOrUpdateChild()
-                // save first avatar at storage to get its path
                 saveChildAvatar()
-
             }
             imageButton -> {
                 cameraRequestHandler.showPictureDialog()

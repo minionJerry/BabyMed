@@ -54,7 +54,9 @@ class IllnessDetailActivity : AppCompatActivity() {
         addIllnessViewModel.initGettingIllnessObserver()
         addIllnessViewModel.initRemovingIllnessObserver()
 
-        addIllnessViewModel.onGetIllnessByIdComplete().observe(this, Observer { illness -> initFields(illness)  })
+        addIllnessViewModel.onGetIllnessByIdComplete().observe(this, Observer { illness ->
+            initFields(illness)
+            this.illness = illness})
         addIllnessViewModel.onGetIllnessError().observe(this, Observer { error -> showErrorToast(error) })
 
         addIllnessViewModel.onRemoveIllnessResult().observe(this, Observer { isSuccessfult -> if (isSuccessfult) showInfoToast(getString(R.string.illness_is_deleted))})

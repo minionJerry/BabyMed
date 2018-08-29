@@ -57,7 +57,9 @@ class ChildDetailActivity : AppCompatActivity(){
         addEditChildViewModel.initChildDisplayingObserver()
         addEditChildViewModel.initChildRemovingObserver()
 
-        addEditChildViewModel.onCompleteDisplayingChild().observe(this, Observer { child -> initFields(child) })
+        addEditChildViewModel.onCompleteDisplayingChild().observe(this, Observer { child ->
+            initFields(child)
+            this.child = child})
         addEditChildViewModel.onDisplayingChildError().observe(this, Observer { error -> showErrorToast(error) })
 
         addEditChildViewModel.onCompleteRemovingChild().observe(this, Observer { isSuccessfull -> if (isSuccessfull)  showSuccessToast(getString(R.string.child_is_deleted)) })
