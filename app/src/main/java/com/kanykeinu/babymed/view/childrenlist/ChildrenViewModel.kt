@@ -34,7 +34,6 @@ class ChildrenViewModel @Inject constructor(private val babyMedRepository: BabyM
     }
 
     fun getChildrenList(){
-
         disposableObserver = object : DisposableObserver<List<Child>>(){
             override fun onComplete() {
             }

@@ -71,4 +71,8 @@
     <string name="sortByBirthdate">Sort by age</string>
     <string name="sortByBirthdateAsc">Sort by descending birthdate</string>
     <string name="sortByBirthdateDesc">Sort by ascending birthdate</string>
+    <string name="nothing_here_but_me">Nothing here but Me</string>
+    <string name="comment_to_empty_list">No children in your list. To add a child tap the + button</string>
+    <string name="emptyIllnessesListDescrip">Your baby did not have illnesses. It is awesome! To add illnesses history tap the + button</string>
+    <string name="emptyIllnessesList">The list of illnesses is empty</string>
 </resources>

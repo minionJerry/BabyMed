@@ -62,10 +62,6 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         btnSave.setOnClickListener(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     private fun injectAddChildViewModel(){
         AndroidInjection.inject(this)
         addEditChildViewModel = ViewModelProviders.of(this,addEditChildViewModelFactory).get(AddEditChildViewModel::class.java)
@@ -135,7 +131,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         }
     }
 
-    private fun saveOrUpdateChild(avatarPath : Uri){
+    private fun saveOrUpdateChild(avatarPath : Uri?){
         val areFieldsFalidated = validateFields()
         if (areFieldsFalidated) {
             wrapperBirthDate.error = null
@@ -153,7 +149,7 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
         }
     }
 
-    fun saveChild(avatarPath: Uri, weight : Int?, bloodType : String?){
+    fun saveChild(avatarPath: Uri?, weight : Int?, bloodType : String?){
         val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(null,editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
                 weight, avatarPath.toString(), bloodType,sharedPreferencesManager.getUserId(),null)
         val newChild = Child(0, null, firebaseChild.name, firebaseChild.birthDate, firebaseChild.gender,
@@ -166,12 +162,12 @@ class NewChildActivity : AppCompatActivity() , View.OnClickListener, View.OnFocu
     }
 
     private fun saveChildAvatar(){
-        if (!child?.photoUri?.equals(uriPhoto.toString())!!)
-                addEditChildViewModel.saveChildAvatarToFirebase(uriPhoto!!)
-        else saveOrUpdateChild(uriPhoto!!)
+        if (uriPhoto!=null && !child?.photoUri.equals(uriPhoto.toString()))
+            uriPhoto?.let { addEditChildViewModel.saveChildAvatarToFirebase(it) }
+        else saveOrUpdateChild(uriPhoto)
     }
 
-    fun updateChild(avatarPath: Uri, weight: Int?,bloodType: String?){
+    fun updateChild(avatarPath: Uri?, weight: Int?,bloodType: String?){
         val newChild = Child(child!!.id, child!!.firebaseId, editTextName.text.toString(), editTextBirthDate.text.toString(), editTextGender.text.toString(),
                 weight, avatarPath.toString(), bloodType)
         val firebaseChild = com.kanykeinu.babymed.data.source.remote.firebase.Child(newChild.firebaseId,newChild.name,newChild.birthDate,newChild.gender,newChild.weight,

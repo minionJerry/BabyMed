@@ -1,6 +1,7 @@
 package com.kanykeinu.babymed.view.childrenlist
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -54,7 +55,6 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
         checkIfUserAuthorized()
         setContentView(R.layout.activity_main)
         setSupportActionBar(bottomAppBar)
-        progressBar.visibility = View.VISIBLE
         initRecyclerView()
         openAddChildScreen()
         loadData()
@@ -68,8 +68,15 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
 
         childrenViewModel.onSuccess()
                 .observe(this, Observer<List<Child>> { children->
-                    if (children != null)
+                    if (children.size > 0) {
                         initChildrenList(children)
+                        animationEmptyList.cancelAnimation()
+                        animationEmptyList.visibility = View.INVISIBLE
+                        emptyListDescrip.visibility = View.INVISIBLE
+                        emptyListComment.visibility = View.INVISIBLE
+                    }
+                    else
+                        animationEmptyList.playAnimation()
                 })
 
         childrenViewModel.onError()
@@ -81,7 +88,8 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
         childrenViewModel.onLoader()
                 .observe(this, Observer { isLoading ->
                     if (isLoading == false)
-                        progressBar.visibility = View.GONE
+                        animation_view.cancelAnimation()
+                        animation_view.visibility = View.GONE
                 })
 
         childrenViewModel.onSorttedChildrenResult()
@@ -107,6 +115,7 @@ class ChildrenActivity : AppCompatActivity() , OnSortChildrenClick{
     }
 
     private fun loadData() {
+        animation_view.playAnimation()
         childrenViewModel.getChildrenList()
     }
 

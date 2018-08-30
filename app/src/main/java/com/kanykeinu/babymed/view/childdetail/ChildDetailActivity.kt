@@ -68,7 +68,14 @@ class ChildDetailActivity : AppCompatActivity(){
         addIllnessViewModel = ViewModelProviders.of(this,addIllnesViewModelFactory).get(AddIllnessViewModel::class.java)
         addIllnessViewModel.initGettingIllnessListObserver()
 
-        addIllnessViewModel.onGetIllnessesComplete().observe(this, Observer { illnesses -> if (illnesses.isNotEmpty()) { initChildIllnesses(illnesses) } })
+        addIllnessViewModel.onGetIllnessesComplete().observe(this, Observer { illnesses ->
+            if (illnesses.size > 0) {
+                initChildIllnesses(illnesses)
+                emptyListImg.visibility = View.GONE
+                emptyListIllnessesDescrip.visibility = View.GONE
+                emptyListIllnessesComment.visibility = View.GONE
+            }
+        })
         addIllnessViewModel.onGetIllnessesError().observe(this, Observer { error -> showErrorToast(error) })
     }
 

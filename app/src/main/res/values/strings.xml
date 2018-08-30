@@ -82,4 +82,8 @@
     <string name="blood_type_B_neg" translatable="false"> 3(B) Rh-</string>
     <string name="blood_type_AB_pos" translatable="false"> 4(AB) Rh+</string>
     <string name="blood_type_AB_neg" translatable="false"> 4(AB) Rh-</string>
+    <string name="nothing_here_but_me">Никого, кроме меня нет</string>
+    <string name="comment_to_empty_list">У вас еще нет детей в данном списке. Чтобы добавить ребенка нажмите на кнопку +</string>
+    <string name="emptyIllnessesListDescrip">У ребенка не было заболеваний и это прекрасно! Чтобы добавить историю заболеваний нажмите на кнопку +</string>
+    <string name="emptyIllnessesList">Cписок перенесенных заболеваний пуст</string>
 </resources>

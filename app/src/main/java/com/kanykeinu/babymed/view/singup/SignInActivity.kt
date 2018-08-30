@@ -76,7 +76,6 @@ class SignInActivity : BaseAuthActivity() {
 
         addEditChildViewModel.onChildrenDeletingComplete().observe(this, Observer { isSuccessfull ->
             if (isSuccessfull){
-                showSuccessToast("blabla")
                 goToChildrenList()
             }
         })
